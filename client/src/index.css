@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Nunito:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 22s linear infinite;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  @apply text-dark bg-white;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-head {
+  font-family: 'Playfair Display', serif;
+}
+
+/* ── OTP Login Modal Animations ─────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-5px); }
+  40%     { transform: translateX(5px); }
+  60%     { transform: translateX(-4px); }
+  80%     { transform: translateX(4px); }
+}
+
+@layer utilities {
+  .animate-fadeSlideIn { animation: fadeSlideIn 0.3s ease both; }
+  .animate-shake       { animation: shake 0.45s cubic-bezier(0.36,0.07,0.19,0.97); }
+}
+
+/* ── Mobile Responsive Overhaul ───────────────────────────────── */
+/* Prevent horizontal scroll globally */
+html, body {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Better tap targets on mobile */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent zoom on input focus (iOS) */
+input, textarea, select {
+  font-size: 16px !important;  /* iOS won't zoom if font-size >= 16px */
+}
+
+/* Override for desktop where we want smaller text */
+@media (min-width: 640px) {
+  input, textarea, select {
+    font-size: 14px !important;
+  }
+}
+
+/* Safe area padding for iPhone notch / home bar */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

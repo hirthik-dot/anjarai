@@ -1,0 +1,12 @@
+{
+  "name": "anjaraipetti-ecommerce",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "vercel-build": "(cd client && npm install && npm run build) && (cd admin && npm install && npm run build) && mkdir -p client/dist/admin && cp -r admin/dist/* client/dist/admin/"
+  },
+  "dependencies": {
+    "cloudinary": "^2.9.0",
+    "multer": "^2.1.1"
+  }
+}
