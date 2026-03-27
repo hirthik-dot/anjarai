@@ -30,7 +30,7 @@ function getTransporter() {
 // ── Decide which provider to use ────────────────────────────────────────────
 // Use Resend if RESEND_API_KEY is set, otherwise fall back to Gmail/SMTP
 function useResend() {
-  return !!process.env.RESEND_API_KEY;
+  return false; // Forced to false to use Nodemailer instead of Resend
 }
 
 /**
