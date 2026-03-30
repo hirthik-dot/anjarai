@@ -61,34 +61,34 @@ export default function ProductsPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center gap-4 flex-wrap">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h2 className="font-head text-4xl font-black text-brand-dark tracking-tight">📦 Products</h2>
-          <p className="text-brand-mid text-xs font-black uppercase tracking-[3px] mt-1.5 opacity-40">Manage your product catalog ({products.length})</p>
+          <h2 className="font-head text-2xl sm:text-4xl font-black text-brand-dark tracking-tight">📦 Products</h2>
+          <p className="text-brand-mid text-[10px] sm:text-xs font-black uppercase tracking-[2px] sm:tracking-[3px] mt-1 sm:mt-1.5 opacity-40">Manage your product catalog ({products.length})</p>
         </div>
         <button 
           onClick={() => { setEditing(null); setModalOpen(true); }}
-          className="bg-brand-green hover:bg-brand-green-light text-white font-black rounded-full px-8 py-3.5 text-sm uppercase tracking-widest flex items-center gap-2 shadow-xl shadow-brand-green/30 transition-all hover:scale-105"
+          className="bg-brand-green hover:bg-brand-green-light text-white font-black rounded-full px-6 sm:px-8 py-3 sm:py-3.5 text-xs sm:text-sm uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-brand-green/30 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto"
         >
           <Plus size={18} /> ADD NEW PRODUCT
         </button>
       </div>
 
       {/* Toolbar */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 items-center">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100 flex flex-col gap-4 sm:gap-6">
         <div className="relative flex-1 group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-mid group-focus-within:text-brand-green transition-colors" size={18} />
           <input 
             type="text" value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name or ID..."
-            className="w-full bg-brand-light/50 border-2 border-brand-green-pale rounded-2xl pl-12 pr-4 py-3 text-sm font-bold focus:border-brand-green outline-none transition-all"
+            className="w-full bg-brand-light/50 border-2 border-brand-green-pale rounded-xl sm:rounded-2xl pl-12 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold focus:border-brand-green outline-none transition-all"
           />
         </div>
 
-        <div className="flex gap-4 items-center flex-wrap">
+        <div className="flex gap-2 sm:gap-4 items-center flex-wrap">
           <select 
             value={filter.collection} onChange={(e) => setFilter(f => ({ ...f, collection: e.target.value }))}
-            className="bg-brand-light/50 border-2 border-brand-green-pale rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest outline-none text-brand-mid focus:border-brand-green transition-all"
+            className="bg-brand-light/50 border-2 border-brand-green-pale rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest outline-none text-brand-mid focus:border-brand-green transition-all flex-1 sm:flex-none min-w-0"
           >
             <option value="all">Collections: ALL</option>
             {['best-sellers', 'mega-combo-offers', 'baby-organic', 'instant-health-drink', 'skin-hair'].map(c => (
@@ -97,7 +97,7 @@ export default function ProductsPage() {
           </select>
           <select 
             value={filter.status} onChange={(e) => setFilter(f => ({ ...f, status: e.target.value }))}
-            className="bg-brand-light/50 border-2 border-brand-green-pale rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest outline-none text-brand-mid focus:border-brand-green transition-all"
+            className="bg-brand-light/50 border-2 border-brand-green-pale rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest outline-none text-brand-mid focus:border-brand-green transition-all flex-1 sm:flex-none min-w-0"
           >
             <option value="all">Status: ALL</option>
             <option value="active">Active</option>
@@ -113,7 +113,7 @@ export default function ProductsPage() {
 
       {/* Content */}
       {view === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 pb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-8 pb-10">
           {filteredProducts.map(p => (
             <ProductCard 
               key={p.id} product={p} 
@@ -173,8 +173,8 @@ export default function ProductsPage() {
 
 function ProductCard({ product, onEdit, onDelete, onToggleStatus }) {
   return (
-    <div className="bg-white rounded-[32px] overflow-hidden border border-gray-100/50 shadow-sm hover:shadow-2xl transition-all group flex flex-col h-full animate-in zoom-in-95 duration-500 shadow-brand-green/5">
-      <div className="relative aspect-[4/3] bg-brand-light/50 p-4">
+    <div className="bg-white rounded-[20px] sm:rounded-[32px] overflow-hidden border border-gray-100/50 shadow-sm hover:shadow-2xl transition-all group flex flex-col h-full shadow-brand-green/5">
+      <div className="relative aspect-[4/3] bg-brand-light/50 p-2 sm:p-4">
         <img 
           src={product.images?.[0]} 
           alt={product.name} 
@@ -186,20 +186,20 @@ function ProductCard({ product, onEdit, onDelete, onToggleStatus }) {
         </div>
       </div>
       
-      <div className="p-6 flex-1 flex flex-col gap-3">
+      <div className="p-3 sm:p-6 flex-1 flex flex-col gap-2 sm:gap-3">
         <div className="flex flex-wrap gap-1">
           {product.collections.slice(0, 2).map(c => (
-            <span key={c} className="text-[9px] font-black uppercase tracking-widest text-brand-mid/50 bg-gray-50 px-2 py-0.5 rounded-full">{c.replace(/-/g, ' ')}</span>
+            <span key={c} className="text-[7px] sm:text-[9px] font-black uppercase tracking-wider sm:tracking-widest text-brand-mid/50 bg-gray-50 px-1.5 sm:px-2 py-0.5 rounded-full">{c.replace(/-/g, ' ')}</span>
           ))}
         </div>
-        <h3 className="font-head text-lg font-bold text-brand-dark leading-snug line-clamp-2 min-h-[3.5rem]">{product.name}</h3>
+        <h3 className="font-head text-sm sm:text-lg font-bold text-brand-dark leading-snug line-clamp-2 min-h-[2.5rem] sm:min-h-[3.5rem]">{product.name}</h3>
         
-        <div className="flex items-center justify-between mt-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-auto gap-2">
           <div className="flex flex-col">
-            <span className="text-2xl font-black text-brand-green font-head tracking-tight">{formatPrice(product.price)}</span>
-            {product.original_price && <span className="text-xs text-brand-mid/40 line-through font-bold">{formatPrice(product.original_price)}</span>}
+            <span className="text-lg sm:text-2xl font-black text-brand-green font-head tracking-tight">{formatPrice(product.price)}</span>
+            {product.original_price && <span className="text-[10px] sm:text-xs text-brand-mid/40 line-through font-bold">{formatPrice(product.original_price)}</span>}
           </div>
-          <div className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border-2 ${
+          <div className={`px-2 sm:px-4 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[8px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-widest border-2 text-center ${
             product.type === 'buy' ? 'border-brand-green/20 text-brand-green bg-brand-green/5' : 
             product.type === 'add' ? 'border-brand-warm/20 text-brand-warm bg-brand-warm/5' : 
             'border-gray-100 text-brand-mid/40 bg-gray-50'
@@ -209,11 +209,11 @@ function ProductCard({ product, onEdit, onDelete, onToggleStatus }) {
         </div>
       </div>
 
-      <div className="px-6 py-5 bg-brand-light/20 flex items-center justify-between border-t border-gray-50 group-hover:bg-brand-green-pale/10 transition-colors">
+      <div className="px-3 sm:px-6 py-3 sm:py-5 bg-brand-light/20 flex items-center justify-between border-t border-gray-50 group-hover:bg-brand-green-pale/10 transition-colors">
         <ToggleSwitch checked={product.is_active} onChange={onToggleStatus} />
-        <div className="flex gap-2">
-          <button onClick={onEdit} className="w-10 h-10 rounded-2xl bg-white border border-gray-100 text-brand-mid hover:text-brand-green hover:border-brand-green transition-all flex items-center justify-center shadow-sm"><Edit2 size={16} /></button>
-          <button onClick={onDelete} className="w-10 h-10 rounded-2xl bg-white border border-gray-100 text-brand-mid hover:text-brand-sale hover:border-brand-sale transition-all flex items-center justify-center shadow-sm"><Trash2 size={16} /></button>
+        <div className="flex gap-1.5 sm:gap-2">
+          <button onClick={onEdit} className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white border border-gray-100 text-brand-mid hover:text-brand-green hover:border-brand-green transition-all flex items-center justify-center shadow-sm active:scale-90"><Edit2 size={14} /></button>
+          <button onClick={onDelete} className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white border border-gray-100 text-brand-mid hover:text-brand-sale hover:border-brand-sale transition-all flex items-center justify-center shadow-sm active:scale-90"><Trash2 size={14} /></button>
         </div>
       </div>
     </div>

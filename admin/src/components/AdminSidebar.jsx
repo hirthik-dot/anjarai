@@ -4,7 +4,7 @@ import {
   BarChart3, Box, Image as ImageIcon, Megaphone, Leaf, 
   Award, Sparkles, Tag, Heart, Info, PlayCircle, 
   Mail, Link as LinkIcon, Gift, LogOut, ExternalLink, 
-  User, ShieldCheck, Compass, LayoutList, Factory, History, ClipboardList, Users, Flag
+  User, ShieldCheck, Compass, LayoutList, Factory, History, ClipboardList, Users, Flag, X, ShoppingBag
 } from 'lucide-react';
 
 const NAV_GROUPS = [
@@ -32,6 +32,7 @@ const NAV_GROUPS = [
     { icon: ClipboardList, label: 'Reports',       path: '/inventory-reports' },
   ]},
   { group: 'BUSINESS', items: [
+    { icon: ShoppingBag, label: 'Orders',       path: '/orders'        },
     { icon: Mail,       label: 'Newsletter',    path: '/newsletter'    },
     { icon: LinkIcon,   label: 'Footer',        path: '/footer'        },
     { icon: Gift,       label: 'Offers/Promo',  path: '/offers'        },
@@ -43,22 +44,32 @@ const NAV_GROUPS = [
   ]},
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
   const { admin, logout } = useAdmin();
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 w-64 bg-brand-green text-white z-40 shadow-2xl flex flex-col border-r border-white/10">
+    <aside className={`fixed left-0 top-0 bottom-0 w-64 bg-brand-green text-white z-50 shadow-2xl flex flex-col border-r border-white/10 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
       {/* Brand Header */}
-      <div className="p-8 pb-4">
-        <h1 className="font-head text-2xl font-black tracking-tight leading-none">
-          The <span className="text-brand-warm italic">Anjaraipetti</span>
-        </h1>
-        <p className="text-white/40 text-[10px] font-black tracking-widest uppercase mt-2 pl-1">Admin Panel</p>
-        <div className="h-px w-full bg-white/10 mt-6" />
+      <div className="p-6 md:p-8 pb-4 flex justify-between items-start">
+        <div>
+          <h1 className="font-head text-2xl font-black tracking-tight leading-none">
+            The <span className="text-brand-warm italic">Anjaraipetti</span>
+          </h1>
+          <p className="text-white/40 text-[10px] font-black tracking-widest uppercase mt-2 pl-1">Admin Panel</p>
+        </div>
+        <button 
+          className="lg:hidden text-white/60 hover:text-white bg-white/5 hover:bg-white/10 p-2 rounded-xl transition-colors"
+          onClick={() => setSidebarOpen(false)}
+        >
+          <X size={20} />
+        </button>
+      </div>
+      <div className="px-6 md:px-8">
+        <div className="h-px w-full bg-white/10 mt-2" />
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-8 scrollbar-hide">
+      <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-8 scrollbar-hide overscroll-contain">
         {NAV_GROUPS.map((group, idx) => (
           <div key={idx}>
             <h3 className="text-white/30 text-[9px] font-black uppercase tracking-[3px] mb-4 pl-4">{group.group}</h3>

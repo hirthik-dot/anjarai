@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
+import LanguageToggle from './LanguageToggle';
+import { useLang } from '../context/LanguageContext';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -12,6 +14,7 @@ const Header = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [menuOpen, setMenuOpen] = useState(false);
     const [dropOpen, setDropOpen] = useState(false);
+    const { t } = useLang();
 
     const links = (navbar?.nav_links || []);
 
@@ -34,7 +37,7 @@ const Header = () => {
                     className="font-head font-bold text-lg sm:text-xl lg:text-2xl text-green flex-shrink-0 leading-tight flex flex-col items-start"
                 >
                     <div className="flex items-center gap-1">
-                        {navbar?.logo_text?.split(' ')[0] || 'Anjaraipetti'} <span className="text-warm italic">{navbar?.logo_text?.split(' ').slice(1).join(' ') || ''}</span>
+                        {(navbar?.logo_text || '').split(' ')[0] || 'Anjaraipetti'} <span className="text-warm italic">{(navbar?.logo_text || '').split(' ').slice(1).join(' ') || ''}</span>
                     </div>
                     {navbar?.logo_sub && (
                         <span className="text-[9px] sm:text-[10px] uppercase font-black tracking-[0.4em] text-green/40 leading-none mt-1">
@@ -63,7 +66,10 @@ const Header = () => {
                 </form>
 
                 {/* ── Right actions ─────────────────────────── */}
-                <div className="ml-auto flex items-center gap-2 sm:gap-3">
+                <div className="ml-auto flex items-center gap-1.5 sm:gap-3">
+
+                    {/* Language Toggle — always visible */}
+                    <LanguageToggle />
 
                     {/* Mobile search icon */}
                     <button
@@ -99,10 +105,17 @@ const Header = () => {
                                             <p className="text-[11px] text-mid truncate">{user.email}</p>
                                         </div>
                                         <button
+                                            type="button"
+                                            onClick={() => { navigate('/orders'); setDropOpen(false); }}
+                                            className="w-full text-left px-4 py-3 text-[12.5px] font-semibold text-dark hover:bg-green-pale/40 transition-colors"
+                                        >
+                                            {t('My orders')}
+                                        </button>
+                                        <button
                                             onClick={() => { logout(); setDropOpen(false); }}
                                             className="w-full text-left px-4 py-3 text-[12.5px] font-semibold text-red-500 hover:bg-red-50 transition-colors rounded-b-xl"
                                         >
-                                            🚪 Sign Out
+                                        <i className="fa-solid fa-arrow-right-from-bracket mr-2"></i> {t('Sign Out')}
                                         </button>
                                     </div>
                                 </>
@@ -113,7 +126,7 @@ const Header = () => {
                             onClick={openLogin}
                             className="hidden sm:block border-2 border-green text-green rounded-full px-3 sm:px-5 py-1.5 md:py-2 text-xs sm:text-sm font-bold hover:bg-green hover:text-white transition-colors duration-200 whitespace-nowrap"
                         >
-                            Log In
+                            {t('Log In')}
                         </button>
                     )}
 
@@ -125,7 +138,7 @@ const Header = () => {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
-                        <span className="hidden sm:inline">Cart</span>
+                        <span className="hidden sm:inline">{t('Cart')}</span>
                         {count > 0 && (
                             <span className="absolute -top-1.5 -right-1.5 sm:bg-warm sm:text-white bg-white text-green rounded-full w-4 h-4 sm:w-5 sm:h-5 text-[9px] sm:text-[10px] font-black flex items-center justify-center leading-none shadow-md">
                                 {count}
@@ -159,7 +172,7 @@ const Header = () => {
                         {/* Drawer header */}
                         <div className="bg-green px-5 py-4 flex items-center justify-between shrink-0">
                             <div className="font-head font-bold text-lg text-white">
-                                {navbar?.logo_text?.split(' ')[0] || 'Anjaraipetti'} <span className="text-warm italic">{navbar?.logo_text?.split(' ').slice(1).join(' ') || ''}</span>
+                                {(navbar?.logo_text || '').split(' ')[0] || 'Anjaraipetti'} <span className="text-warm italic">{(navbar?.logo_text || '').split(' ').slice(1).join(' ') || ''}</span>
                             </div>
                             <button onClick={() => setMenuOpen(false)} className="text-white/80 text-2xl leading-none px-2 shrink-0">
                                 ×
@@ -173,7 +186,7 @@ const Header = () => {
                                     type="text"
                                     value={searchTerm}
                                     onChange={e => setSearchTerm(e.target.value)}
-                                    placeholder="Search products..."
+                                    placeholder={t('Search products...')}
                                     className="w-full border-2 border-green-pale rounded-full px-4 py-2.5 text-sm outline-none focus:border-green transition-colors font-body pr-10"
                                 />
                                 <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-mid p-1">
@@ -190,7 +203,7 @@ const Header = () => {
                                 onClick={() => { navigate('/'); setMenuOpen(false); }}
                                 className="w-full text-left px-4 py-3 text-[13.5px] font-semibold text-dark hover:bg-green-pale hover:text-green rounded-xl transition-colors"
                             >
-                                Home
+                                {t('Home')}
                             </button>
                             {links.map((link, idx) => (
                                 <button
@@ -217,10 +230,17 @@ const Header = () => {
                                         </div>
                                     </div>
                                     <button
+                                        type="button"
+                                        onClick={() => { navigate('/orders'); setMenuOpen(false); }}
+                                        className="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-dark hover:bg-green-pale/50 rounded-xl transition-colors mb-1"
+                                    >
+                                        {t('My orders')}
+                                    </button>
+                                    <button
                                         onClick={() => { logout(); setMenuOpen(false); }}
                                         className="w-full text-left px-4 py-2.5 text-[13px] font-semibold text-red-500 hover:bg-red-50 rounded-xl transition-colors"
                                     >
-                                        🚪 Sign Out
+                                        <i className="fa-solid fa-arrow-right-from-bracket mr-2"></i> {t('Sign Out')}
                                     </button>
                                 </>
                             ) : (
@@ -228,7 +248,7 @@ const Header = () => {
                                     onClick={() => { openLogin(); setMenuOpen(false); }}
                                     className="w-full bg-green text-white rounded-xl py-3.5 font-bold text-sm hover:bg-green-light transition-colors"
                                 >
-                                    Log In / Sign Up
+                                    {t('Log In / Sign Up')}
                                 </button>
                             )}
                         </div>

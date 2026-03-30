@@ -1,35 +1,35 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useData } from '../context/DataContext';
 
 const AnnouncementBar = () => {
     const { announcements } = useData();
-    const active = (Array.isArray(announcements) ? announcements : []).filter(a => a.is_active !== false);
+    const [dismissed, setDismissed] = useState(false);
 
-    if (active.length === 0) return null;
+    const active = useMemo(
+        () => (Array.isArray(announcements) ? announcements : []).filter(a => a.is_active !== false),
+        [announcements],
+    );
+
+    if (dismissed || active.length === 0) return null;
 
     return (
-        <div className="bg-green py-2 overflow-hidden select-none">
-            {/* Desktop: side by side */}
-            <div className="hidden md:flex items-center justify-center gap-10">
-                {active.map((a, i) => (
-                    <React.Fragment key={a._id || i}>
-                        <span className="text-white text-[10.5px] lg:text-[11.5px] font-bold uppercase tracking-widest">
-                            {a.text}
-                        </span>
-                        {i < active.length - 1 && <span className="opacity-40 text-white text-xs">|</span>}
-                    </React.Fragment>
-                ))}
-            </div>
+        <div
+            className="bg-[color:var(--brand-primary-dark)] py-2 px-4 overflow-hidden select-none relative z-[1200]"
+            style={{ color: 'white' }}
+        >
+            <div className="relative max-w-[1400px] mx-auto flex items-center justify-center">
+                <span className="text-[13px] font-bold text-white text-center px-10">
+                    {active[0]?.text}
+                </span>
 
-            {/* Mobile: single scrolling marquee */}
-            <div className="md:hidden flex">
-                <div className={`flex gap-14 whitespace-nowrap ${active.length > 0 ? 'animate-marquee' : ''}`}>
-                    {[...active, ...active].map((a, i) => (
-                        <span key={`${a._id || i}-${i}`} className="text-white text-[9.5px] font-bold uppercase tracking-widest">
-                            {a.text}
-                        </span>
-                    ))}
-                </div>
+                <button
+                    type="button"
+                    onClick={() => setDismissed(true)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-white/90 hover:text-white"
+                    aria-label="Dismiss announcement"
+                >
+                    ✕
+                </button>
             </div>
         </div>
     );

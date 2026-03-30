@@ -8,7 +8,7 @@ const ComingSoon = () => {
         <div className="flex flex-col items-center justify-center text-center py-16 sm:py-24 md:py-36 px-4 sm:px-6 w-full max-w-[1400px] mx-auto group">
             <div className="relative mb-8 sm:mb-12 animate-bounce-slow">
                 <div className="absolute -inset-10 bg-green/10 rounded-full blur-[40px] sm:blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                <span className="text-6xl sm:text-7xl md:text-9xl relative z-10 transition-transform duration-700 group-hover:scale-110">🌱</span>
+                <span className="text-6xl sm:text-7xl md:text-9xl relative z-10 transition-transform duration-700 group-hover:scale-110 text-green-600"><i className="fa-solid fa-seedling"></i></span>
             </div>
 
             <h2 className="font-head text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-dark tracking-tight mb-4 sm:mb-8 drop-shadow-sm group-hover:text-green transition-colors">

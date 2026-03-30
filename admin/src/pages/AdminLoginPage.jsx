@@ -94,11 +94,18 @@ export default function AdminLoginPage() {
       </div>
 
       {/* RIGHT — Login Card */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-brand-light/50 relative overflow-hidden">
-        <div className="bg-white rounded-[40px] shadow-[0_40px_100px_rgba(0,0,0,0.08)] w-full max-w-[480px] p-12 relative border border-gray-100">
-          <div className="mb-10 text-center">
-            <h2 className="font-head text-4xl font-black text-brand-dark tracking-tight">Admin Login</h2>
-            <p className="text-brand-mid font-bold text-sm mt-3 opacity-60">Sign in to manage your empire</p>
+      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 bg-brand-light/50 relative overflow-hidden min-h-screen lg:min-h-0">
+        {/* Mobile brand header */}
+        <div className="lg:hidden text-center mb-8 sm:mb-10">
+          <h1 className="font-head text-2xl sm:text-3xl font-bold text-brand-dark tracking-tight">
+            The <span className="text-brand-warm italic">Anjaraipetti</span>
+          </h1>
+          <p className="text-brand-mid text-[10px] sm:text-xs font-black uppercase tracking-[2px] sm:tracking-[3px] mt-1.5 opacity-50">Admin Control Panel</p>
+        </div>
+        <div className="bg-white rounded-[24px] sm:rounded-[40px] shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:shadow-[0_40px_100px_rgba(0,0,0,0.08)] w-full max-w-[480px] p-6 sm:p-12 relative border border-gray-100">
+          <div className="mb-6 sm:mb-10 text-center">
+            <h2 className="font-head text-2xl sm:text-4xl font-black text-brand-dark tracking-tight">Admin Login</h2>
+            <p className="text-brand-mid font-bold text-xs sm:text-sm mt-2 sm:mt-3 opacity-60">Sign in to manage your empire</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -147,7 +154,7 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          <p className="text-center text-[10px] font-black tracking-widest text-brand-mid/40 mt-10 uppercase py-3 border-y border-gray-50">
+          <p className="text-center text-[9px] sm:text-[10px] font-black tracking-widest text-brand-mid/40 mt-6 sm:mt-10 uppercase py-2 sm:py-3 border-y border-gray-50">
             Powered by Anjaraipetti Admin Core
           </p>
         </div>

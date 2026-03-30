@@ -38,7 +38,7 @@ const CollectionPage = () => {
             <div className="max-w-[1400px] mx-auto py-16 md:py-24 px-6 min-h-[40vh]">
                 {products.length === 0 ? (
                     <div className="text-center py-20 bg-gray-50 rounded-[40px] border-2 border-dashed border-gray-200">
-                        <p className="text-3xl mb-4">🌿</p>
+                        <p className="text-3xl mb-4 text-green-600"><i className="fa-solid fa-leaf"></i></p>
                         <h3 className="text-xl font-bold text-dark mb-2">No products found</h3>
                         <p className="text-mid">We are currently updating our {title} collection. Check back soon!</p>
                     </div>

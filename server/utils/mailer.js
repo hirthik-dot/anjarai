@@ -1,36 +1,43 @@
 // server/utils/mailer.js
 require('dotenv').config();
-const { Resend } = require('resend');
 const nodemailer = require('nodemailer');
 
-// ── Resend client (production) ──────────────────────────────────────────────
-let resend;
-function getResend() {
-  if (!resend) resend = new Resend(process.env.RESEND_API_KEY);
-  return resend;
-}
-
-// ── Nodemailer fallback (local dev with Gmail) ──────────────────────────────
+// ── Transporter (Brevo SMTP for production, Gmail for local dev) ─────────
 let transporter;
 function getTransporter() {
   if (transporter) return transporter;
-  transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
-    },
-    connectionTimeout: 10000,
-    greetingTimeout:   10000,
-    socketTimeout:     15000,
-  });
-  return transporter;
-}
 
-// ── Decide which provider to use ────────────────────────────────────────────
-// Use Resend if RESEND_API_KEY is set, otherwise fall back to Gmail/SMTP
-function useResend() {
-  return false; // Forced to false to use Nodemailer instead of Resend
+  if (process.env.BREVO_SMTP_KEY) {
+    // ── Brevo SMTP (works from cloud servers like Render) ─────────────
+    transporter = nodemailer.createTransport({
+      host: 'smtp-relay.brevo.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.BREVO_SMTP_LOGIN,  // Your Brevo login email
+        pass: process.env.BREVO_SMTP_KEY,     // Your Brevo SMTP key
+      },
+      connectionTimeout: 10000,
+      greetingTimeout:   10000,
+      socketTimeout:     15000,
+    });
+    console.log('📧 Using Brevo SMTP for emails');
+  } else {
+    // ── Gmail fallback (local dev only) ───────────────────────────────
+    transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+      connectionTimeout: 10000,
+      greetingTimeout:   10000,
+      socketTimeout:     15000,
+    });
+    console.log('📧 Using Gmail SMTP for emails');
+  }
+
+  return transporter;
 }
 
 /**
@@ -128,43 +135,22 @@ async function sendOtpEmail(to, name, otp) {
   const html = buildOtpHtml(name, otp);
   const text = `Hi ${name},\n\nYour OTP for The Anjaraipetti is: ${otp}\n\nThis code expires in 10 minutes.\nDo not share this with anyone.\n\n– The Anjaraipetti Team`;
   const subject = `${otp} is your The Anjaraipetti login code`;
-  const from = process.env.MAIL_FROM || 'The Anjaraipetti <onboarding@resend.dev>';
+  const from = process.env.MAIL_FROM || process.env.BREVO_SMTP_LOGIN || process.env.MAIL_USER;
 
   try {
-    if (useResend()) {
-      // ── Resend (production / cloud) ─────────────────────────────────
-      const { data, error } = await getResend().emails.send({
-        from,
-        to: [to],
-        subject,
-        html,
-        text,
-      });
-
-      if (error) {
-        console.error('❌ Resend API Error:', error);
-        throw new Error(error.message || 'Resend API returned an error');
-      }
-
-      console.log(`✅ OTP Email sent via Resend to ${to}: ${data?.id}`);
-      return data;
-
-    } else {
-      // ── Nodemailer / Gmail fallback (local dev) ─────────────────────
-      const info = await getTransporter().sendMail({
-        from,
-        to,
-        subject,
-        text,
-        html,
-      });
-      console.log(`✅ OTP Email sent via Gmail to ${to}: ${info.messageId}`);
-      return info;
-    }
+    const info = await getTransporter().sendMail({
+      from: `The Anjaraipetti <${from}>`,
+      to,
+      subject,
+      text,
+      html,
+    });
+    console.log(`✅ OTP Email sent to ${to}: ${info.messageId}`);
+    return info;
 
   } catch (err) {
     console.error('❌ CRITICAL MAIL FAILURE:', {
-      provider: useResend() ? 'Resend' : 'Gmail/SMTP',
+      provider: process.env.BREVO_SMTP_KEY ? 'Brevo' : 'Gmail',
       message: err.message,
       code: err.code,
       statusCode: err.statusCode,

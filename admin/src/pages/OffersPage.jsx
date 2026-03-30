@@ -13,7 +13,7 @@ export default function OffersPage() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-  const [form, setForm] = useState({ image_url: '', title: '', subtitle: '', code: '', discount: '', link: '', is_active: true });
+  const [form, setForm] = useState({ image_url: '', title: '', subtitle: '', code: '', discount: '', is_active: true });
   
   const toast = useToast();
 
@@ -30,16 +30,51 @@ export default function OffersPage() {
   const handleSave = async (e) => {
     e.preventDefault();
     if (!form.title || !form.image_url) return toast.error('Title and Image are required');
+
+    // Convert human discount text into numeric fields used by promo-code validation.
+    // Examples: "20% OFF" => percent + 20 ; "₹100" or "100" => flat + 100
+    const parseDiscount = (text) => {
+      const raw = String(text || '').trim();
+      if (!raw) return { discount_type: 'percent', discount_value: 0 };
+
+      const percentMatch = raw.match(/([\d.]+)\s*%/);
+      if (percentMatch) {
+        return { discount_type: 'percent', discount_value: Number(percentMatch[1]) || 0 };
+      }
+
+      const flatMatch = raw.match(/([\d.]+)/);
+      if (flatMatch) {
+        return { discount_type: 'flat', discount_value: Number(flatMatch[1]) || 0 };
+      }
+
+      return { discount_type: 'percent', discount_value: 0 };
+    };
     try {
+      const parsedDiscount = parseDiscount(form.discount);
+      if (!parsedDiscount.discount_value || parsedDiscount.discount_value <= 0) {
+        return toast.error('Set a valid discount (example: "20% OFF" or "₹100")');
+      }
+
+      // Destination is fixed (admins shouldn't need to manage URLs)
+      const DEFAULT_LINK = '/collections/special-promo-offers';
+
+      const payload = {
+        ...form,
+        code: String(form.code || '').trim().toUpperCase(),
+        discount_type: parsedDiscount.discount_type,
+        discount_value: parsedDiscount.discount_value,
+        link: DEFAULT_LINK,
+      };
+
       if (editing) {
-        await api.put(`/offers/${editing._id}`, form);
+        await api.put(`/offers/${editing._id}`, payload);
         toast.success('Offer updated');
       } else {
-        await api.post('/offers', form);
+        await api.post('/offers', payload);
         toast.success('Offer created');
       }
       setEditing(null);
-      setForm({ image_url: '', title: '', subtitle: '', code: '', discount: '', link: '', is_active: true });
+      setForm({ image_url: '', title: '', subtitle: '', code: '', discount: '', is_active: true });
       fetchItems();
     } catch (err) { toast.error('Save failed'); }
   };
@@ -68,7 +103,7 @@ export default function OffersPage() {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-500 pb-20">
-      <h2 className="font-head text-4xl font-black text-brand-dark tracking-tight">🎁 Mega Combo Offers</h2>
+      <h2 className="font-head text-4xl font-black text-brand-dark tracking-tight">🎁 Special Promo Offers</h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Editor */}
@@ -108,14 +143,6 @@ export default function OffersPage() {
                   className={inputClass + " min-h-[80px]"}
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-brand-mid/50 ml-2">Link Url</label>
-                <input 
-                  value={form.link} onChange={(e) => setForm(f => ({ ...f, link: e.target.value }))}
-                  placeholder="/collections/mega-combo-offers"
-                  className={inputClass}
-                />
-              </div>
               <div className="p-4 bg-brand-light/50 rounded-2xl border border-gray-100 flex items-center justify-between">
                 <ToggleSwitch checked={form.is_active} onChange={(v) => setForm(f => ({ ...f, is_active: v }))} label="Active" />
               </div>
@@ -124,7 +151,7 @@ export default function OffersPage() {
                   <Save size={18} /> {editing ? 'UPDATE OFFER' : 'CREATE OFFER'}
                 </button>
                 {editing && (
-                  <button type="button" onClick={() => { setEditing(null); setForm({ image_url: '', title: '', subtitle: '', code: '', discount: '', link: '', is_active: true }); }} className="w-16 bg-gray-100 text-brand-mid rounded-2xl flex items-center justify-center hover:bg-brand-sale/10 hover:text-brand-sale transition-all">
+                  <button type="button" onClick={() => { setEditing(null); setForm({ image_url: '', title: '', subtitle: '', code: '', discount: '', is_active: true }); }} className="w-16 bg-gray-100 text-brand-mid rounded-2xl flex items-center justify-center hover:bg-brand-sale/10 hover:text-brand-sale transition-all">
                     <X size={24} />
                   </button>
                 )}

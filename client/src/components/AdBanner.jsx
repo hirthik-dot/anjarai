@@ -11,7 +11,7 @@ const AdBanner = () => {
     const ad = active[0];
 
     return (
-        <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 my-10 sm:my-16 md:my-24 overflow-hidden group">
+        <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 my-4 sm:my-6 md:my-8 overflow-hidden group">
             <div className="relative rounded-2xl md:rounded-[48px] bg-gradient-to-br from-green-light via-green to-dark p-8 sm:p-12 md:p-20 shadow-2xl overflow-hidden shadow-green/20 hover:scale-[1.005] transition-transform duration-700">
 
                 {/* Background Image Overlay */}
@@ -24,7 +24,7 @@ const AdBanner = () => {
                 </div>
 
                 {/* Decorative 🌿 SVG Icon */}
-                <div className="absolute -top-6 sm:-top-12 -right-6 sm:-right-12 text-[80px] sm:text-[140px] md:text-[240px] opacity-[.08] select-none pointer-events-none rotate-12 group-hover:rotate-45 transition-transform duration-1000">🌿</div>
+                <div className="absolute -top-6 sm:-top-12 -right-6 sm:-right-12 text-[80px] sm:text-[140px] md:text-[240px] opacity-[.08] select-none pointer-events-none rotate-12 group-hover:rotate-45 transition-transform duration-1000 text-green-800"><i className="fa-solid fa-leaf"></i></div>
 
                 <div className="relative z-10 max-w-[550px] animate-in slide-in-from-bottom-6 duration-700 cursor-pointer" onClick={() => ad.btn_link && navigate(ad.btn_link)}>
                     <span className="inline-block bg-sale text-white text-[9px] sm:text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] rounded-full px-4 sm:px-5 py-1.5 sm:py-2 mb-6 sm:mb-8 shadow-xl shadow-sale/40">

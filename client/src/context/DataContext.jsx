@@ -35,6 +35,17 @@ export const DataProvider = ({ children }) => {
       const fresh = await res.json();
       if (fresh && typeof fresh === 'object') {
         const merged = { ...FALLBACK_DATA, ...fresh };
+        
+        // Auto-patch incorrectly mapped "All" links from DB
+        if (merged.navbar && merged.navbar.nav_links) {
+          merged.navbar.nav_links = merged.navbar.nav_links.map(link => {
+            if (link.label?.toLowerCase() === 'all' && link.link === '/collections/offers') {
+              return { ...link, link: '/collections/all' };
+            }
+            return link;
+          });
+        }
+
         setContent(merged);
         try {
           localStorage.setItem(CACHE_KEYS.ALL_CONTENT, JSON.stringify(merged));
@@ -72,8 +83,10 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:4000';
     const socket = io(socketUrl, {
-      reconnectionAttempts: 10,
+      reconnectionAttempts: 5,
       reconnectionDelay: 5000,
+      transports: ['websocket', 'polling'],
+      timeout: 10000
     });
 
     const triggerRefresh = (event) => {
@@ -82,6 +95,13 @@ export const DataProvider = ({ children }) => {
     };
 
     socket.on('connect', () => console.log('📡 Engine Live: Socket Connected'));
+    // Gracefully handle connection errors (e.g. mobile / offline)
+    socket.on('connect_error', (err) => {
+      console.warn('[Socket] Connection error — will retry:', err.message);
+    });
+    socket.on('reconnect_failed', () => {
+      console.warn('[Socket] All reconnection attempts failed — using cached data');
+    });
     
     const events = [
       'product:created', 'product:updated', 'product:deleted',
@@ -96,12 +116,18 @@ export const DataProvider = ({ children }) => {
     return () => socket.disconnect();
   }, [refreshContent]);
 
-  const getByCollection = useCallback((slug) => {
+  const getByCollection = useCallback((rawSlug) => {
+    // Legacy slug normalization mapping
+    let slug = rawSlug;
+    if (slug === 'best-sellers') slug = 'best-seller';
+    if (slug === 'combo-offers' || slug === 'mega-combo-offers') slug = 'combo-packs';
+    if (slug === 'organic') slug = 'organic-masalas';
+
     const products = content.products || [];
     if (slug === 'all' || !slug) return products;
     return products.filter(p =>
-      p.category?.toLowerCase() === slug.toLowerCase() ||
-      (p.collections && p.collections.some(c => c.slug === slug))
+      p.category?.toLowerCase() === slug?.toLowerCase() ||
+      (p.collections && Array.isArray(p.collections) && p.collections.includes(slug))
     );
   }, [content.products]);
 

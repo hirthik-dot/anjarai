@@ -2,6 +2,7 @@ const router  = require('express').Router();
 const Product = require('../models/Product');
 const protect = require('../middleware/auth');
 const { getIO } = require('../socket');
+const { attachStockToProducts } = require('../utils/productStock');
 
 // ── PUBLIC routes (used by client) ───────────────────────────────────────────
 
@@ -13,7 +14,8 @@ router.get('/', async (req, res) => {
     if (collection && collection !== 'all') {
       query.collections = collection;
     }
-    const products = await Product.find(query).sort('sort_order');
+    const docs = await Product.find(query).sort('sort_order');
+    const products = await attachStockToProducts(docs);
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -23,8 +25,9 @@ router.get('/', async (req, res) => {
 // GET /api/products/slug/:slug — single product by slug (public)
 router.get('/slug/:slug', async (req, res) => {
   try {
-    const product = await Product.findOne({ slug: req.params.slug, is_active: true });
-    if (!product) return res.status(404).json({ error: 'Product not found' });
+    const doc = await Product.findOne({ slug: req.params.slug, is_active: true });
+    if (!doc) return res.status(404).json({ error: 'Product not found' });
+    const [product] = await attachStockToProducts([doc]);
     res.json(product);
   } catch (err) {
     res.status(500).json({ error: err.message });

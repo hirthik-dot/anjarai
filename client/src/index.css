@@ -1,8 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Nunito:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Brand system (Green + Gold) */
+:root {
+  --brand-primary: #2E7D32;
+  --brand-primary-light: #4CAF50;
+  --brand-primary-dark: #1B5E20;
+  --brand-primary-deeper: #0A3D0C;
+  /* Yellow-gold (glass-like) */
+  --brand-gold: #F5C542;
+  --brand-gold-dark: #E0B300;
+  --brand-gold-light: #FFF2B3;
+  --brand-cream: #FFF8E1;
+  --brand-surface: #F1F8E9;
+  --brand-border: #A5D6A7;
+  --brand-text: #1A1A1A;
+
+  --shadow-green: 0 4px 24px rgba(46, 125, 50, 0.18);
+  --shadow-gold: 0 4px 16px rgba(224, 179, 0, 0.28);
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.08);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {
@@ -37,8 +64,11 @@
 }
 
 body {
-  font-family: 'Nunito', sans-serif;
-  @apply text-dark bg-white;
+  font-family: 'DM Sans', sans-serif;
+  background: #ffffff;
+  color: var(--brand-text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 h1,
@@ -100,14 +130,68 @@ input, textarea, select {
   font-size: 16px !important;  /* iOS won't zoom if font-size >= 16px */
 }
 
-/* Override for desktop where we want smaller text */
-@media (min-width: 640px) {
-  input, textarea, select {
-    font-size: 14px !important;
-  }
-}
+/* Desktop uses the same 16px to avoid iOS zoom edge cases */
 
 /* Safe area padding for iPhone notch / home bar */
 .safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+/* ── Enhanced Mobile UX ───────────────────────────────────── */
+/* Hide scrollbars on mobile but keep scrolling */
+@media (max-width: 640px) {
+  ::-webkit-scrollbar { display: none; }
+  * { scrollbar-width: none; }
+}
+
+/* Smooth momentum scroll for iOS */
+.overflow-y-auto,
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Better touch targets on mobile */
+@media (max-width: 640px) {
+  button, a, [role="button"] {
+    min-height: 36px;
+  }
+}
+
+/* iOS fixed positioning fix */
+@supports (-webkit-touch-callout: none) {
+  .fixed { -webkit-transform: translateZ(0); }
+}
+
+/* Smooth bounce animation for heart icon */
+@keyframes bounce-slow {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
+
+/* WhatsApp pulse ring (draw attention) */
+@keyframes whatsappPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.8);
+    opacity: 0;
+  }
+}
+
+.whatsapp-pulse-ring {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  border: 2px solid rgba(37, 211, 102, 0.55);
+  animation: whatsappPulse 1.8s ease-out infinite;
 }

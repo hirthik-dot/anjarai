@@ -1,8 +1,9 @@
 const router  = require('express').Router();
 const Inventory = require('../models/Inventory');
 const InventoryTransaction = require('../models/InventoryTransaction');
-const Product = require('../models/Product');
 const protect = require('../middleware/auth');
+const { syncProductTypeFromInventory } = require('../utils/productStock');
+const { getIO } = require('../socket');
 
 // ── GET /api/inventory — List all inventory records ──────────────────────────
 router.get('/', protect, async (req, res) => {
@@ -60,12 +61,13 @@ router.post('/adjust', protect, async (req, res) => {
       performed_by: req.admin.username || 'admin'
     });
 
-    // 4. Auto mark 'soldout' if 0
-    if (qtyAfter === 0) {
-      await Product.findByIdAndUpdate(product_id, { type: 'sold' });
-    } else if (qtyBefore === 0 && qtyAfter > 0) {
-      await Product.findByIdAndUpdate(product_id, { type: 'buy' });
-    }
+    await syncProductTypeFromInventory(product_id);
+
+    // Notify storefront to refresh cached all-content.
+    // Client listens for `product:updated` and refetches immediately when it arrives.
+    try {
+      getIO().emit('product:updated', { _id: product_id });
+    } catch (_) {}
 
     res.json({ message: 'Stock updated successfully', currentStock: qtyAfter });
   } catch (err) {

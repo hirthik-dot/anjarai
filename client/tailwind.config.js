@@ -12,7 +12,7 @@ module.exports = {
           light: '#52b788',
           pale: '#d8f3dc',
         },
-        warm: '#f4a261',
+        warm: '#F5C542',
         cream: '#fefae0',
         sale: '#e63946',
         dark: '#1b1b1b',
@@ -21,7 +21,7 @@ module.exports = {
       },
       fontFamily: {
         head: ['"Playfair Display"', 'serif'],
-        body: ['"Nunito"', 'sans-serif'],
+        body: ['"DM Sans"', 'sans-serif'],
       },
     },
   },

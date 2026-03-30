@@ -25,6 +25,7 @@ import InventoryPage from './pages/InventoryPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import ClientUsersPage from './pages/ClientUsersPage';
+import OrdersPage from './pages/OrdersPage';
 import InventoryHistoryPage from './pages/InventoryHistoryPage';
 import InventoryReportsPage from './pages/InventoryReportsPage';
 
@@ -71,6 +72,7 @@ export default function App() {
             <Route path="/profile"           element={<AdminProfilePage />} />
             <Route path="/change-password"   element={<ChangePasswordPage />} />
             <Route path="/clients"           element={<ClientUsersPage />} />
+            <Route path="/orders"            element={<OrdersPage />} />
             <Route path="/inventory-history" element={<InventoryHistoryPage />} />
             <Route path="/inventory-reports" element={<InventoryReportsPage />} />
           </Route>

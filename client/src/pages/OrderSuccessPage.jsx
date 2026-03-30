@@ -19,7 +19,7 @@ const OrderSuccessPage = () => {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 sm:py-20 px-4 text-center">
             <div className="max-w-[400px] w-full bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-sm border border-gray-100 animate-in fade-in zoom-in duration-500">
                 <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-green-pale/30 flex items-center justify-center text-4xl sm:text-5xl mx-auto mb-6 sm:mb-8 shadow-xl shadow-green/5">
-                    🎉
+                    <i className="fa-solid fa-gift text-green-600"></i>
                 </div>
                 
                 <h1 className="font-head text-3xl sm:text-4xl font-bold text-dark mb-3 sm:mb-4 tracking-tight">
@@ -32,17 +32,26 @@ const OrderSuccessPage = () => {
 
                 <div className="space-y-3 sm:space-y-4">
                     <button
-                        onClick={() => navigate('/')}
+                        type="button"
+                        onClick={() => navigate('/orders')}
                         className="w-full bg-green text-white rounded-xl sm:rounded-2xl py-4 sm:py-[18px] font-black text-[11px] sm:text-xs uppercase tracking-widest shadow-xl sm:shadow-2xl shadow-green/20 hover:bg-green-light active:scale-[0.98] transition-all"
+                    >
+                        View my orders →
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => navigate('/')}
+                        className="w-full bg-white text-green border-2 border-green rounded-xl sm:rounded-2xl py-4 sm:py-[18px] font-black text-[11px] sm:text-xs uppercase tracking-widest hover:bg-green-pale/20 active:scale-[0.98] transition-all"
                     >
                         Back to Home →
                     </button>
                     
                     <button
+                        type="button"
                         onClick={() => navigate('/collections/all')}
-                        className="w-full bg-white text-green border-2 border-green rounded-xl sm:rounded-2xl py-4 sm:py-[18px] font-black text-[11px] sm:text-xs uppercase tracking-widest hover:bg-green-pale/20 active:scale-[0.98] transition-all"
+                        className="w-full bg-white text-green border-2 border-green/30 rounded-xl sm:rounded-2xl py-4 sm:py-[18px] font-black text-[11px] sm:text-xs uppercase tracking-widest hover:bg-green-pale/20 active:scale-[0.98] transition-all"
                     >
-                        Shop More
+                        Shop more
                     </button>
                 </div>
 

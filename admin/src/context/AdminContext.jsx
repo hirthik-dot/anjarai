@@ -35,7 +35,15 @@ export function AdminProvider({ children }) {
       const s = io(SOCKET_URL, {
         reconnectionAttempts: 3,
         timeout: 5000,
-        transports: ['websocket']
+        transports: ['websocket', 'polling'],
+        autoConnect: true
+      });
+      // Silently handle connection errors (e.g. on mobile / offline)
+      s.on('connect_error', (err) => {
+        console.warn('[Socket] Connection error (may be offline):', err.message);
+      });
+      s.on('reconnect_failed', () => {
+        console.warn('[Socket] Reconnection failed — operating in offline mode');
       });
       setSocket(s);
       return () => s.disconnect();

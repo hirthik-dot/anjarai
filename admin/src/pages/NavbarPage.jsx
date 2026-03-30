@@ -63,15 +63,15 @@ export default function NavbarPage() {
   if (loading) return null;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center gap-4 flex-wrap">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-500">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h2 className="font-head text-4xl font-black text-brand-dark tracking-tight">🧭 Navbar Setup</h2>
-          <p className="text-brand-mid text-xs font-black uppercase tracking-[3px] mt-1.5 opacity-40">Manage logo, links and contact info</p>
+          <h2 className="font-head text-2xl sm:text-4xl font-black text-brand-dark tracking-tight">🧭 Navbar Setup</h2>
+          <p className="text-brand-mid text-[10px] sm:text-xs font-black uppercase tracking-[2px] sm:tracking-[3px] mt-1 sm:mt-1.5 opacity-40">Manage logo, links and contact info</p>
         </div>
         <button 
           onClick={handleSave}
-          className="bg-brand-green hover:bg-brand-green-light text-white font-black rounded-full px-8 py-3.5 text-sm uppercase tracking-widest flex items-center gap-2 shadow-xl shadow-brand-green/30 transition-all hover:scale-105"
+          className="bg-brand-green hover:bg-brand-green-light text-white font-black rounded-full px-6 sm:px-8 py-3 sm:py-3.5 text-xs sm:text-sm uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-brand-green/30 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto"
         >
           <Save size={18} /> SAVE CHANGES
         </button>
@@ -127,28 +127,30 @@ export default function NavbarPage() {
           <div className="space-y-4">
             <Reorder.Group axis="y" values={form.nav_links} onReorder={handleReorder} className="space-y-3">
               {(form.nav_links || []).map((link, idx) => (
-                <Reorder.Item key={link._id || idx} value={link} className="flex gap-4 items-center bg-brand-light/30 p-4 rounded-2xl border border-brand-green-pale/30 group cursor-grab active:cursor-grabbing">
-                  <div className="text-brand-mid/20 group-hover:text-brand-green transition-colors"><GripVertical size={20} /></div>
-                  <div className="flex-1 grid grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                          <input 
-                              placeholder="Label" value={link.label} onChange={(e) => updateLink(idx, 'label', e.target.value)}
-                              className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-brand-green outline-none transition-all"
-                          />
-                      </div>
-                      <div className="space-y-1">
-                          <input 
-                              placeholder="Link (e.g. /products)" value={link.link} onChange={(e) => updateLink(idx, 'link', e.target.value)}
-                              className="w-full bg-white border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold focus:border-brand-green outline-none transition-all"
-                          />
-                      </div>
+                <Reorder.Item key={link._id || idx} value={link} className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center bg-brand-light/30 p-3 sm:p-4 rounded-2xl border border-brand-green-pale/30 group cursor-grab active:cursor-grabbing">
+                  <div className="flex items-center gap-3">
+                    <div className="text-brand-mid/20 group-hover:text-brand-green transition-colors"><GripVertical size={20} /></div>
+                    <div className="flex-1 grid grid-cols-2 gap-2 sm:gap-4">
+                        <div className="space-y-1">
+                            <input 
+                                placeholder="Label" value={link.label} onChange={(e) => updateLink(idx, 'label', e.target.value)}
+                                className="w-full bg-white border border-gray-100 rounded-xl px-3 sm:px-4 py-2 text-xs font-bold focus:border-brand-green outline-none transition-all"
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <input 
+                                placeholder="Link (e.g. /products)" value={link.link} onChange={(e) => updateLink(idx, 'link', e.target.value)}
+                                className="w-full bg-white border border-gray-100 rounded-xl px-3 sm:px-4 py-2 text-xs font-bold focus:border-brand-green outline-none transition-all"
+                            />
+                        </div>
+                    </div>
+                    <button 
+                      onClick={() => removeLink(idx)}
+                      className="w-9 h-9 rounded-xl bg-brand-sale/10 text-brand-sale hover:bg-brand-sale hover:text-white transition-all flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 shrink-0"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
-                  <button 
-                    onClick={() => removeLink(idx)}
-                    className="w-9 h-9 rounded-xl bg-brand-sale/10 text-brand-sale hover:bg-brand-sale hover:text-white transition-all flex items-center justify-center opacity-0 group-hover:opacity-100"
-                  >
-                    <Trash2 size={16} />
-                  </button>
                 </Reorder.Item>
               ))}
             </Reorder.Group>

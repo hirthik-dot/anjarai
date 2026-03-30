@@ -12,11 +12,12 @@ const ClosingBanner = require('../models/ClosingBanner');
 const Video         = require('../models/Video');
 const FooterConfig  = require('../models/FooterConfig');
 const NavbarConfig  = require('../models/NavbarConfig');
+const { attachStockToProducts } = require('../utils/productStock');
 
 router.get('/', async (req, res) => {
   try {
     const [
-      products, heroSlides, announcements, tagline, trustItems, marqueeItems,
+      productDocs, heroSlides, announcements, tagline, trustItems, marqueeItems,
       categories, about, ads, closingBanner, videos, footer, navbar
     ] = await Promise.all([
       Product.find({ is_active: true }).sort({ sort_order: 1 }),
@@ -33,6 +34,8 @@ router.get('/', async (req, res) => {
       FooterConfig.findOne(),
       NavbarConfig.findOne()
     ]);
+
+    const products = await attachStockToProducts(productDocs);
 
     res.json({
       products, heroSlides, announcements, tagline, trustItems, marqueeItems,

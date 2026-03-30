@@ -5,8 +5,8 @@ const CollectionHero = ({ title, subtitle, breadcrumb = [] }) => {
     return (
         <div className="bg-gradient-to-br from-green via-green/95 to-green-light py-10 sm:py-16 md:py-20 text-center relative overflow-hidden">
             {/* Decorative Elements */}
-            <div className="absolute top-0 right-0 p-10 text-[180px] opacity-[0.06] select-none pointer-events-none rotate-12">🌿</div>
-            <div className="absolute bottom-0 left-0 p-10 text-[140px] opacity-[0.04] select-none pointer-events-none -rotate-12">🌱</div>
+            <div className="absolute top-0 right-0 p-10 text-[180px] opacity-[0.06] select-none pointer-events-none rotate-12 text-green-800"><i className="fa-solid fa-leaf"></i></div>
+            <div className="absolute bottom-0 left-0 p-10 text-[140px] opacity-[0.04] select-none pointer-events-none -rotate-12 text-green-800"><i className="fa-solid fa-seedling"></i></div>
 
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
                 <h1 className="font-head text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2 sm:mb-4 drop-shadow-sm tracking-tight">

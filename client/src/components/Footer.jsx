@@ -1,11 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { useLang } from '../context/LanguageContext';
 
 const Footer = () => {
     const { footer } = useData();
 
     if (!footer) return null;
+    const { t } = useLang();
 
     return (
         <footer className="bg-dark pt-16 sm:pt-24 lg:pt-36 relative overflow-hidden text-white/70 select-none">
@@ -44,22 +46,36 @@ const Footer = () => {
                     </div>
                 </div>
 
-                {/* Column 2 - Quick Links */}
+                {/* Column 2 - Quick Links & Policies */}
                 <div className="flex flex-col animate-in slide-in-from-bottom duration-700 delay-100">
-                    <h4 className="font-head text-lg md:text-xl font-black text-white mb-8 md:mb-12 tracking-wide uppercase flex items-center gap-3">
-                        <span className="w-1.5 h-1.5 rounded-full bg-warm" /> Policies
-                    </h4>
                     <ul className="space-y-4 md:space-y-6">
-                        {(footer.quick_links || []).map((link, i) => (
-                            <li key={i} className="flex group">
-                                <NavLink
-                                    to={link.href}
-                                    className="text-[13px] md:text-[14px] font-black uppercase tracking-widest text-white/50 hover:text-warm transition-all duration-300 relative pl-0 group-hover:pl-4"
-                                >
-                                    <span className="absolute left-0 opacity-0 group-hover:opacity-100 transition-all duration-300">→</span>
-                                    {link.label}
-                                </NavLink>
-                            </li>
+                        {[
+                            { label: 'Home', href: '/' },
+                            { label: 'About Us', href: '/about' },
+                            { label: 'All Products', href: '/collections/all' },
+                            { divider: true },
+                            { label: 'Terms and Conditions', href: '/terms' },
+                            { label: 'Privacy Policy', href: '/privacy' },
+                            { label: 'Shipping Policy', href: '/shipping' },
+                            { label: 'Return, Refund Policy', href: '/refund' },
+                            { label: 'Cookie Policy', href: '/cookie' },
+                            { label: 'Cancellation Policy', href: '/cancellation' },
+                        ].map((link, i) => (
+                            link.divider ? (
+                                <li key={i} className="my-1">
+                                    <div className="h-px bg-white/10 w-full" />
+                                </li>
+                            ) : (
+                                <li key={i} className="flex group">
+                                    <NavLink
+                                        to={link.href}
+                                        className="text-[13px] md:text-[14px] font-black uppercase tracking-widest text-white/50 hover:text-warm transition-all duration-300 relative pl-0 group-hover:pl-4"
+                                    >
+                                        <span className="absolute left-0 opacity-0 group-hover:opacity-100 transition-all duration-300">→</span>
+                                        {link.label}
+                                    </NavLink>
+                                </li>
+                            )
                         ))}
                     </ul>
                 </div>
@@ -67,7 +83,7 @@ const Footer = () => {
                 {/* Column 3 - Categories */}
                 <div className="flex flex-col animate-in slide-in-from-bottom duration-700 delay-200">
                     <h4 className="font-head text-lg md:text-xl font-black text-white mb-8 md:mb-12 tracking-wide uppercase flex items-center gap-3">
-                        <span className="w-1.5 h-1.5 rounded-full bg-green" /> Categories
+                        <span className="w-1.5 h-1.5 rounded-full bg-green" /> {t('Categories')}
                     </h4>
                     <ul className="space-y-4 md:space-y-6">
                         {(footer.category_links || []).map((link, i) => (
@@ -87,7 +103,7 @@ const Footer = () => {
                 {/* Column 4 - Contact Us */}
                 <div className="flex flex-col animate-in slide-in-from-bottom duration-700 delay-300">
                     <h4 className="font-head text-lg md:text-xl font-black text-white mb-8 md:mb-12 tracking-wide uppercase flex items-center gap-3">
-                        <span className="w-1.5 h-1.5 rounded-full bg-sale" /> Contact Us
+                        <span className="w-1.5 h-1.5 rounded-full bg-sale" /> {t('Contact Us')}
                     </h4>
                     <div className="space-y-6 md:space-y-10">
                         {footer.whatsapp_link && (
@@ -119,7 +135,7 @@ const Footer = () => {
                                 <i className="fas fa-map-marker-alt text-xl md:text-2xl" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-[11px] md:text-[12px] font-black text-white/30 tracking-[0.2em] mb-1">Location</span>
+                                <span className="text-[11px] md:text-[12px] font-black text-white/30 tracking-[0.2em] mb-1">{t('Location')}</span>
                                 <span className="text-sm md:text-base font-black text-white">{footer.location}</span>
                             </div>
                         </div>
@@ -136,8 +152,8 @@ const Footer = () => {
                         </p>
                         <span className="hidden md:block w-px h-6 bg-white/10" />
                         <div className="flex items-center gap-8 text-[11px] md:text-[12px] font-black uppercase tracking-[0.4em] text-white/20">
-                            <span>Safe Payments</span>
-                            <span>FSSAI Certified</span>
+                            <span>{t('Safe Payments')}</span>
+                            <span>{t('FSSAI Certified')}</span>
                         </div>
                     </div>
 
@@ -147,7 +163,7 @@ const Footer = () => {
                         rel="noopener noreferrer"
                         className="flex items-center gap-4 group"
                     >
-                        <span className="text-[11px] md:text-[12px] font-black uppercase tracking-[0.5em] text-white/20 group-hover:text-white/40 transition-all">Powered By</span>
+                        <span className="text-[11px] md:text-[12px] font-black uppercase tracking-[0.5em] text-white/20 group-hover:text-white/40 transition-all">{t('Powered By')}</span>
                         <span className="text-[11px] md:text-[12px] font-black uppercase tracking-[0.4em] text-white/40 group-hover:text-warm transition-all flex items-center gap-3">
                             {footer.powered_by_text} <span className="w-12 h-px bg-current opacity-20 scale-x-50 group-hover:scale-x-100 origin-left transition-transform duration-500" />
                         </span>

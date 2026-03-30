@@ -21,14 +21,19 @@ app.use(cors({
     const allowedOrigins = [
       'http://localhost:5173',
       'http://localhost:5174',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:5174',
+      'http://localhost:3000',
+      'http://localhost:3001',
       process.env.CLIENT_URL,
       process.env.ADMIN_URL
     ].filter(Boolean);
     
-    // Allow if origin is in the list OR matches vercel.app
-    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+    // Allow if origin is in the list OR matches vercel.app OR origin is localhost (any port for dev)
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || (origin && origin.startsWith('http://localhost:'))) {
       callback(null, true);
     } else {
+      console.warn(`Blocked by CORS: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -59,12 +64,14 @@ app.use('/api/newsletter',     require('./routes/newsletter'));
 app.use('/api/footer',         require('./routes/footer'));
 app.use('/api/offers',         require('./routes/offers'));
 app.use('/api/collections',    require('./routes/collections'));
+app.use('/api/policies',      require('./routes/policies'));
 app.use('/api/upload',         require('./routes/upload'));
 app.use('/api/orders',         require('./routes/orders'));
 app.use('/api/admin-profile',  require('./routes/adminProfile'));
 app.use('/api/inventory',      require('./routes/inventory'));
 app.use('/api/client',         require('./routes/clientAuth'));
 app.use('/api/clients',        require('./routes/adminClients'));
+app.use('/api/offers/promo',  require('./routes/offersPromo'));
 
 // ── Health check ─────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date() }));

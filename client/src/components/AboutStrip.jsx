@@ -1,15 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { useLang } from '../context/LanguageContext';
 
 const AboutStrip = () => {
     const navigate = useNavigate();
     const { about } = useData();
 
     if (!about) return null;
+    const { t } = useLang();
 
     return (
-        <section className="bg-cream py-10 sm:py-14 lg:py-16 relative overflow-hidden">
+        <section className="bg-cream py-8 sm:py-10 lg:py-12 relative overflow-hidden">
             {/* Decorative SVG/Shapes */}
             <div className="absolute -top-24 -right-24 w-96 h-96 bg-green-pale/10 rounded-full blur-3xl" />
             <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-warm/5 rounded-full blur-3xl" />
@@ -29,7 +31,7 @@ const AboutStrip = () => {
                         <div className="absolute -bottom-4 -right-2 sm:-bottom-6 sm:-right-6 md:bottom-2 md:-right-8 bg-white rounded-xl sm:rounded-[24px] p-3 sm:p-5 flex flex-col items-center gap-1 sm:gap-2 shadow-2xl animate-float font-head">
                             <span className="text-2xl sm:text-4xl">🎖️</span>
                             <span className="text-[9px] sm:text-xs font-black text-dark uppercase tracking-[0.2em] text-center">
-                                100% <br /> Lab Approved
+                                100% <br /> {t('Lab Approved')}
                             </span>
                         </div>
                     </div>
@@ -37,7 +39,7 @@ const AboutStrip = () => {
                     {/* Right Column - Content */}
                     <div className="flex flex-col animate-in slide-in-from-right duration-1000 mt-2 sm:mt-0">
                         <span className="text-warm text-[10px] sm:text-[12px] font-black uppercase tracking-[0.3em] mb-2 sm:mb-4 flex items-center gap-2">
-                            <span className="w-6 sm:w-8 h-px bg-warm" /> Our Story
+                            <span className="w-6 sm:w-8 h-px bg-warm" /> {t('Our Story')}
                         </span>
                         <h2 className="font-head text-2xl sm:text-3xl lg:text-[34px] font-bold leading-[1.2] mb-3 sm:mb-3.5">
                             {about.title}
@@ -47,9 +49,12 @@ const AboutStrip = () => {
                         </p>
 
                         <ul className="space-y-2 sm:space-y-2.5 mb-5 sm:mb-6">
-                            {(about.badges || []).map((badge, index) => (
+                            {about.badges && about.badges.map((badge, index) => (
                                 <li key={index} className="flex items-center gap-2.5 text-[12.5px] sm:text-[13.5px] font-semibold text-green cursor-default">
-                                    🌿 {badge}
+                                    <div className="w-5 h-5 rounded-full bg-green-pale/50 flex items-center justify-center text-[10px] text-green border border-green/10">
+                                        ✓
+                                    </div>
+                                    {badge}
                                 </li>
                             ))}
                         </ul>
@@ -58,7 +63,7 @@ const AboutStrip = () => {
                             onClick={() => navigate(about.btn_link || '/collections/all')}
                             className="w-fit bg-warm text-white rounded-full px-5 sm:px-7 py-2.5 sm:py-3 font-bold text-sm sm:text-base hover:bg-green transition-all"
                         >
-                            {about.btn_text || 'Shop Now →'}
+                            {about.btn_text || t('Shop Now →')}
                         </button>
                     </div>
                 </div>

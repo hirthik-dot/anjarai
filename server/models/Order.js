@@ -4,6 +4,7 @@ const OrderSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   items: [{
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+    variant: { type: String, default: 'default' },
     name: { type: String, required: true },
     price: { type: Number, required: true },
     qty: { type: Number, required: true },
@@ -19,6 +20,10 @@ const OrderSchema = new mongoose.Schema({
   },
   subtotal: { type: Number, required: true },
   shipping_fee: { type: Number, default: 0 },
+  promo_code: { type: String },
+  discount_amount: { type: Number, default: 0 },
+  discount_type: { type: String },
+  discount_value: { type: Number },
   total_amount: { type: Number, required: true },
   payment_method: { type: String, enum: ['RAZORPAY', 'COD'], default: 'RAZORPAY' },
   payment_status: { type: String, enum: ['PENDING', 'PAID', 'FAILED'], default: 'PENDING' },

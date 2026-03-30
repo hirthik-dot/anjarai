@@ -1,13 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useCart } from '../context/CartContext';
+import { useLang } from '../context/LanguageContext';
+
+function stockForVariant(product, selectedVariant) {
+    const map = product.stock_by_variant || {};
+    const key =
+        typeof selectedVariant === 'object' && selectedVariant?.name
+            ? selectedVariant.name
+            : typeof selectedVariant === 'string'
+              ? selectedVariant
+              : 'default';
+    if (map[key] !== undefined) return map[key];
+    if (map.default !== undefined) return map.default;
+    return product.stock_total ?? 0;
+}
 
 const ProductDetailPage = () => {
     const { getBySlug } = useData();
     const { slug } = useParams();
     const navigate = useNavigate();
     const { addItem, addedItemName } = useCart();
+    const { t } = useLang();
     const [product, setProduct] = useState(null);
     const [mainImg, setMainImg] = useState('');
     const [qty, setQty] = useState(1);
@@ -25,16 +40,38 @@ const ProductDetailPage = () => {
             setSelectedVariant(p.variants[0]);
         }
         window.scrollTo(0, 0);
-    }, [slug, navigate]);
+    }, [slug, navigate, getBySlug]);
+
+    const lineStock = useMemo(
+        () => (product ? stockForVariant(product, selectedVariant) : 0),
+        [product, selectedVariant]
+    );
+    const outOfStock = lineStock === 0;
+    const lowStock = lineStock > 0 && lineStock <= 5;
+
+    useEffect(() => {
+        if (lineStock > 0 && qty > lineStock) setQty(lineStock);
+    }, [lineStock, qty]);
 
     if (!product) return null;
 
     const isAdded = addedItemName === product.id;
 
     const handleAddToCart = () => {
-        if (product.type !== 'sold') {
-            addItem({ ...product, selectedVariant }, qty);
+        if (product.type !== 'sold' && !outOfStock) {
+            const addedPrice = typeof selectedVariant === 'object' && selectedVariant.price ? selectedVariant.price : product.price;
+            const addedName = typeof selectedVariant === 'object' && selectedVariant.name ? `${product.name} - ${selectedVariant.name}` : product.name;
+            addItem({ ...product, price: addedPrice, name: addedName, selectedVariant }, qty, false);
         }
+    };
+
+    const handleBuyNow = () => {
+        if (product.type === 'sold' || outOfStock) return;
+        const addedPrice = typeof selectedVariant === 'object' && selectedVariant.price ? selectedVariant.price : product.price;
+        const addedName = typeof selectedVariant === 'object' && selectedVariant.name ? `${product.name} - ${selectedVariant.name}` : product.name;
+        // Don't open the cart drawer; go straight to checkout.
+        addItem({ ...product, price: addedPrice, name: addedName, selectedVariant }, qty, false);
+        navigate('/checkout');
     };
 
     return (
@@ -93,11 +130,21 @@ const ProductDetailPage = () => {
                         <span className="text-mid text-[11px] sm:text-[14px] font-bold opacity-60">({product.reviews} customer reviews)</span>
                     </div>
 
+                    {(outOfStock || lowStock) && (
+                        <p className={`text-[11px] sm:text-sm font-black uppercase tracking-[0.2em] mb-4 ${outOfStock ? 'text-dark/50' : 'text-warm'}`}>
+                            {outOfStock ? t('Out of stock') : t('Only {{n}} left').replace('{{n}}', String(lineStock))}
+                        </p>
+                    )}
+
                     <div className="flex flex-wrap items-center gap-3 sm:gap-8 mb-8 sm:mb-14">
-                        <span className="text-3xl sm:text-4xl md:text-5xl font-black text-green tracking-tighter">₹{product.price}</span>
-                        {product.originalPrice && (
-                            <span className="text-lg sm:text-xl md:text-2xl text-gray-300 line-through font-bold">₹{product.originalPrice}</span>
-                        )}
+                        <span className="text-3xl sm:text-4xl md:text-5xl font-black text-green tracking-tighter">
+                            ₹{typeof selectedVariant === 'object' && selectedVariant.price ? selectedVariant.price : product.price}
+                        </span>
+                        {(typeof selectedVariant === 'object' && selectedVariant.original_price ? selectedVariant.original_price : product.original_price) ? (
+                            <span className="text-lg sm:text-xl md:text-2xl text-gray-300 line-through font-bold">
+                                ₹{typeof selectedVariant === 'object' && selectedVariant.original_price ? selectedVariant.original_price : product.original_price}
+                            </span>
+                        ) : null}
                         <span className="w-full sm:w-auto text-[10px] sm:text-[14px] font-black text-mid opacity-40 uppercase tracking-widest mt-1 sm:mt-2">Inclusive of all taxes</span>
                     </div>
 
@@ -106,15 +153,19 @@ const ProductDetailPage = () => {
                         <div className="mb-8 sm:mb-14">
                             <label className="block text-[11px] sm:text-[14px] font-black uppercase tracking-[0.2em] text-dark/40 mb-3 sm:mb-5">Select Weight:</label>
                             <div className="flex flex-wrap gap-2.5 sm:gap-4">
-                                {product.variants.map((v) => (
-                                    <button
-                                        key={v}
-                                        onClick={() => setSelectedVariant(v)}
-                                        className={`px-5 sm:px-10 py-2 sm:py-4 rounded-lg sm:rounded-xl text-[10px] sm:text-sm font-black uppercase tracking-[0.1em] border-2 transition-all duration-300 ${selectedVariant === v ? 'border-green bg-green-pale/30 text-green shadow-lg sm:shadow-xl shadow-green/10' : 'border-gray-100 text-gray-400 hover:border-green/20 hover:text-dark'}`}
-                                    >
-                                        {v}
-                                    </button>
-                                ))}
+                                {product.variants.map((v, idx) => {
+                                    const vName = typeof v === 'object' ? v.name : v;
+                                    const isSelected = selectedVariant === v || (typeof selectedVariant === 'object' && selectedVariant.name === vName);
+                                    return (
+                                        <button
+                                            key={idx}
+                                            onClick={() => setSelectedVariant(v)}
+                                            className={`px-5 sm:px-10 py-2 sm:py-4 rounded-lg sm:rounded-xl text-[10px] sm:text-sm font-black uppercase tracking-[0.1em] border-2 transition-all duration-300 ${isSelected ? 'border-green bg-green-pale/30 text-green shadow-lg sm:shadow-xl shadow-green/10' : 'border-gray-100 text-gray-400 hover:border-green/20 hover:text-dark'}`}
+                                        >
+                                            {vName}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
@@ -131,11 +182,18 @@ const ProductDetailPage = () => {
                             <input
                                 type="number"
                                 value={qty}
-                                onChange={(e) => setQty(Math.max(1, parseInt(e.target.value) || 1))}
+                                onChange={(e) => {
+                                    const n = parseInt(e.target.value, 10) || 1;
+                                    const max = lineStock > 0 ? lineStock : 999;
+                                    setQty(Math.min(Math.max(1, n), max));
+                                }}
                                 className="w-12 sm:w-16 h-full text-center font-black text-base sm:text-lg outline-none bg-transparent"
                             />
                             <button
-                                onClick={() => setQty(qty + 1)}
+                                onClick={() => {
+                                    const max = lineStock > 0 ? lineStock : 999;
+                                    setQty(Math.min(qty + 1, max));
+                                }}
                                 className="w-10 h-full flex items-center justify-center text-green text-xl sm:text-2xl font-black hover:bg-green-pale/20 transition-colors"
                             >
                                 +
@@ -144,8 +202,8 @@ const ProductDetailPage = () => {
 
                         <button
                             onClick={handleAddToCart}
-                            disabled={product.type === 'sold'}
-                            className={`flex-1 flex items-center justify-center gap-3 sm:gap-4 h-[50px] sm:h-[70px] rounded-xl sm:rounded-2xl font-black text-[11px] sm:text-sm uppercase tracking-[0.3em] transition-all duration-300 shadow-xl sm:shadow-2xl relative overflow-hidden group/btn ${product.type === 'sold' ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : 'bg-green text-white hover:bg-warm hover:shadow-warm/30 hover:-translate-y-1'}`}
+                            disabled={product.type === 'sold' || outOfStock}
+                            className={`flex-1 flex items-center justify-center gap-3 sm:gap-4 h-[50px] sm:h-[70px] rounded-xl sm:rounded-2xl font-black text-[11px] sm:text-sm uppercase tracking-[0.3em] transition-all duration-300 shadow-xl sm:shadow-2xl relative overflow-hidden group/btn ${product.type === 'sold' || outOfStock ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : 'bg-green text-white hover:bg-warm hover:shadow-warm/30 hover:-translate-y-1'}`}
                         >
                             {isAdded ? (
                                 <span className="flex items-center gap-2 sm:gap-3 animate-in zoom-in duration-300">
@@ -155,7 +213,7 @@ const ProductDetailPage = () => {
                                     Item Added!
                                 </span>
                             ) : (
-                                <span>{product.type === 'sold' ? 'Sold Out' : 'Add To Cart —'} <span className="opacity-40">₹{product.price * qty}</span></span>
+                                <span>{product.type === 'sold' || outOfStock ? t('Sold Out') : 'Add To Cart —'} <span className="opacity-40">₹{(typeof selectedVariant === 'object' && selectedVariant.price ? selectedVariant.price : product.price) * qty}</span></span>
                             )}
                         </button>
                     </div>
@@ -164,13 +222,48 @@ const ProductDetailPage = () => {
                     <div className="space-y-4 sm:space-y-8">
                         <Section title="Product Description" content={product.description} defaultOpen={true} />
                         <Section title="Key Benefits" content={
-                            <ul className="list-disc pl-5 space-y-2">
-                                {product.benefits.map((b, i) => <li key={i}>{b}</li>)}
-                            </ul>
+                            product.benefits && product.benefits.length > 0 ? (
+                                <ul className="list-disc pl-5 space-y-2">
+                                    {product.benefits.map((b, i) => <li key={i}>{b}</li>)}
+                                </ul>
+                            ) : null
                         } />
                         <Section title="Ingredients" content={product.ingredients} />
-                        <Section title="How to Use" content={product.howToUse} />
+                        <Section title="How to Use" content={product.how_to_use} />
                     </div>
+                </div>
+            </div>
+
+            {/* Sticky mobile action bar (above BottomNav) */}
+            <div
+                className="md:hidden fixed left-0 right-0 z-[1005] bg-white/95 backdrop-blur border-t border-gray-100 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]"
+                style={{ bottom: 'calc(64px + env(safe-area-inset-bottom, 0px))' }}
+            >
+                <div className="grid grid-cols-3 gap-0 px-3 py-2">
+                    <button
+                        type="button"
+                        onClick={() => {}}
+                        className="h-[48px] rounded-xl font-black text-[12px] tracking-[0.2em] uppercase border-2 border-[color:var(--brand-primary)] text-[color:var(--brand-primary)] bg-white active:scale-[0.98]"
+                    >
+                        Add to Wishlist
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleAddToCart}
+                        disabled={product.type === 'sold' || outOfStock}
+                        className="mx-2 h-[48px] rounded-xl font-black text-[12px] tracking-[0.2em] uppercase border-2 border-[color:var(--brand-gold)] text-[color:var(--brand-primary-dark)] bg-white active:scale-[0.98] disabled:opacity-60"
+                        style={{ color: 'var(--brand-primary-dark)' }}
+                    >
+                        Add to Cart
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleBuyNow}
+                        disabled={product.type === 'sold' || outOfStock}
+                        className="h-[48px] rounded-xl font-black text-[12px] tracking-[0.2em] uppercase bg-[color:var(--brand-gold)] text-[color:var(--brand-primary-dark)] active:scale-[0.98] disabled:opacity-60"
+                    >
+                        Buy Now
+                    </button>
                 </div>
             </div>
 
@@ -213,21 +306,20 @@ const ProductDetailPage = () => {
     );
 };
 
-const Section = ({ title, content, defaultOpen = false }) => {
-    const [isOpen, setIsOpen] = useState(defaultOpen);
+const Section = ({ title, content }) => {
+    if (!content) return null;
+    const isContentEmpty = typeof content === 'string' && content.trim() === '';
+    const isArrayEmpty = Array.isArray(content) && content.length === 0;
+    // Fast check for the benefits ul case
+    const isReactEmpty = content?.props?.children?.length === 0;
+    
+    if (isContentEmpty || isArrayEmpty || isReactEmpty) return null;
+
     return (
-        <div className="border-b border-gray-100 pb-4 sm:pb-8 group">
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex justify-between items-center py-2 text-left group"
-            >
-                <h4 className="font-head text-base sm:text-lg md:text-xl font-black text-dark tracking-tight transition-colors group-hover:text-green">{title}</h4>
-                <span className={`text-xl sm:text-2xl transition-transform duration-300 ${isOpen ? 'rotate-180 text-green' : 'text-gray-200'}`}>⌄</span>
-            </button>
-            <div className={`overflow-hidden transition-all duration-500 ${isOpen ? 'max-h-[800px] opacity-100 mt-4 sm:mt-6' : 'max-h-0 opacity-0'}`}>
-                <div className="text-mid text-[13px] sm:text-sm md:text-base leading-relaxed opacity-80 font-medium pb-2">
-                    {content}
-                </div>
+        <div className="border-b border-gray-100 pb-4 sm:pb-6 group">
+            <h4 className="font-head text-base sm:text-lg md:text-xl font-black text-dark tracking-tight mb-3 sm:mb-4">{title}</h4>
+            <div className="text-mid text-[13px] sm:text-sm md:text-base leading-relaxed opacity-80 font-medium pb-2">
+                {content}
             </div>
         </div>
     );

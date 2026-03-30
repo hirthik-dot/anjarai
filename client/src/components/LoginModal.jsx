@@ -41,7 +41,7 @@ function StepNameEmail({ onNext, defaultData }) {
   return (
     <div className="animate-fadeSlideIn">
       <div className="text-center mb-7">
-        <div className="text-5xl mb-3">🌿</div>
+        <div className="text-5xl mb-3 text-green-600"><i className="fa-solid fa-leaf"></i></div>
         <h2 className="font-head text-[26px] font-bold text-dark leading-tight">
           Welcome to<br /><span className="text-green">Anjaraipetti</span>
         </h2>
@@ -96,8 +96,8 @@ function StepNameEmail({ onNext, defaultData }) {
                      flex items-center justify-center gap-2"
         >
           {loading
-            ? <><span className="animate-spin inline-block">⏳</span> Sending OTP...</>
-            : '✉️ Send Login Code →'
+            ? <><i className="fa-solid fa-spinner fa-spin mr-2"></i> Sending OTP...</>
+            : <><i className="fa-solid fa-envelope mr-2"></i> Send Login Code &rarr;</>
           }
         </button>
       </form>
@@ -228,7 +228,7 @@ function StepOtp({ email, name, onSuccess, onBack }) {
   return (
     <div className="animate-fadeSlideIn">
       <div className="text-center mb-7">
-        <div className="text-5xl mb-3">📬</div>
+        <div className="text-5xl mb-3 text-green-600"><i className="fa-solid fa-envelope-open-text"></i></div>
         <h2 className="font-head text-[24px] font-bold text-dark">Check your email</h2>
         <p className="text-mid text-[13px] mt-2 leading-relaxed">
           We sent a 6-digit code to<br />
@@ -263,7 +263,7 @@ function StepOtp({ email, name, onSuccess, onBack }) {
 
       {loading && (
         <div className="flex items-center justify-center gap-2 mb-4 text-green text-sm font-semibold">
-          <span className="animate-spin">⏳</span> Verifying…
+          <i className="fa-solid fa-spinner fa-spin mr-2"></i> Verifying…
         </div>
       )}
 
@@ -275,7 +275,7 @@ function StepOtp({ email, name, onSuccess, onBack }) {
 
       {resendMsg && (
         <div className="bg-green-pale border border-green rounded-xl px-4 py-2 text-green text-[13px] mb-4 text-center font-semibold">
-          ✅ {resendMsg}
+          <i className="fa-solid fa-check text-green-600 mr-1"></i> {resendMsg}
         </div>
       )}
 
@@ -316,7 +316,7 @@ function StepWelcome({ name, onClose }) {
 
   return (
     <div className="text-center animate-fadeSlideIn py-6">
-      <div className="text-6xl mb-4 animate-bounce">🎉</div>
+      <div className="text-6xl mb-4 animate-bounce text-green-600"><i className="fa-solid fa-gift"></i></div>
       <h2 className="font-head text-[28px] font-bold text-green mb-2">
         Welcome, {name.split(' ')[0]}!
       </h2>
@@ -425,7 +425,7 @@ export default function LoginModal() {
           {loginStep !== 3 && (
             <div className="mt-6 pt-5 border-t border-gray-100 text-center">
               <p className="text-[11px] text-mid">
-                🔒 Secure login · No password needed · FSSAI Certified Brand
+                <i className="fa-solid fa-lock mr-1"></i> Secure login · No password needed · FSSAI Certified Brand
               </p>
             </div>
           )}

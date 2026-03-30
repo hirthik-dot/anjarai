@@ -11,7 +11,7 @@ const ProductSchema = new mongoose.Schema({
   rating:          { type: Number, default: 5 },
   reviews:         { type: Number, default: 0 },
   collections:     { type: [String], default: ["all"] },
-  variants:        { type: [String], default: [] },
+  variants:        { type: Array, default: [] },
   type:            { type: String, default: "buy" },
   description:     { type: String },
   benefits:        { type: [String], default: [] },

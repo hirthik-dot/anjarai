@@ -1,12 +1,14 @@
 import React from 'react';
 import { useData } from '../context/DataContext';
 import { getYouTubeThumbnail } from '../utils/helpers';
+import { useLang } from '../context/LanguageContext';
 
 const VideoSection = () => {
     const { videos } = useData();
     const active = (Array.isArray(videos) ? videos : []).filter(v => v.is_active !== false);
 
     if (active.length === 0) return null;
+    const { t } = useLang();
     return (
         <div className="bg-dark/95 py-16 sm:py-24 md:py-36 relative overflow-hidden">
             {/* Decorative Blur Backgrounds */}
@@ -17,20 +19,20 @@ const VideoSection = () => {
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-10 mb-10 sm:mb-16 md:mb-24 animate-in slide-in-from-bottom duration-1000">
                     <div className="max-w-[650px]">
                         <span className="text-warm text-[10px] sm:text-[12px] md:text-[14px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3">
-                            <span className="w-6 sm:w-8 h-px bg-warm" /> Our Process
+                            <span className="w-6 sm:w-8 h-px bg-warm" /> {t('Our Process')}
                         </span>
                         <h2 className="font-head text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] sm:leading-[1.15] mb-4 sm:mb-6 md:mb-8">
-                            Watch How We Craft <br className="hidden sm:block" /> The <span className="text-green underline underline-offset-[8px] sm:underline-offset-[12px] md:underline-offset-[16px] decoration-white/20">Purest</span> Baby Food
+                            {t('Watch How We Craft')} <br className="hidden sm:block" /> {t('The')} <span className="text-green underline underline-offset-[8px] sm:underline-offset-[12px] md:underline-offset-[16px] decoration-white/20">{t('Purest')}</span> {t('Baby Food')}
                         </h2>
                         <p className="text-white/60 text-sm sm:text-base md:text-lg leading-[1.6] sm:leading-[1.8] font-medium pr-4 sm:pr-0">
-                            Transparency is at the heart of everything we do. See our preparation process, ingredients, and the love that goes into every batch.
+                            {t('Transparency is at the heart of everything we do. See our preparation process, ingredients, and the love that goes into every batch.')}
                         </p>
                     </div>
 
                     <div className="flex flex-row md:flex-col items-center md:items-end gap-3 sm:gap-0 text-white/40 text-[9px] sm:text-[11px] md:text-[13px] font-black uppercase tracking-[0.2em] sm:tracking-[0.4em] md:text-right mt-4 md:mt-0">
-                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-white/20 md:hidden block"></span>Verified Process</span>
+                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-white/20 md:hidden block"></span>{t('Verified Process')}</span>
                         <span className="hidden sm:inline-block md:hidden mx-2">•</span>
-                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-white/20 md:hidden block"></span>100% Organic Recipes</span>
+                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-white/20 md:hidden block"></span>{t('100% Organic Recipes')}</span>
                     </div>
                 </div>
 
@@ -60,7 +62,7 @@ const VideoSection = () => {
                             {/* Labels */}
                             <div className="absolute bottom-6 sm:bottom-10 left-6 sm:left-10 md:bottom-12 md:left-12 max-w-[calc(100%-48px)] sm:max-w-[calc(100%-80px)]">
                                 <span className="inline-block bg-warm/90 backdrop-blur text-white text-[8px] sm:text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] rounded-full px-3 sm:px-4 py-1 sm:py-1.5 mb-2 sm:mb-4 group-hover:-translate-y-1 transition-all duration-300">
-                                    Official Video
+                                    {t('Official Video')}
                                 </span>
                                 <h3 className="text-sm sm:text-lg md:text-2xl font-black text-white drop-shadow-lg group-hover:text-warm transition-colors duration-300 leading-tight uppercase line-clamp-2">
                                     {video.title}

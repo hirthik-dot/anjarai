@@ -46,7 +46,7 @@ const Newsletter = () => {
                             required
                             className="w-full bg-white border-2 border-green-pale/50 rounded-full px-6 sm:px-8 py-4 sm:py-5 md:py-6 text-sm md:text-base font-bold outline-none transition-all focus:border-green focus:shadow-xl sm:focus:shadow-2xl focus:shadow-green/10 placeholder:text-gray-300 placeholder:font-black placeholder:uppercase placeholder:tracking-[0.1em] sm:placeholder:tracking-widest"
                         />
-                        <span className="absolute right-6 sm:right-8 top-1/2 -translate-y-1/2 text-lg sm:text-xl opacity-20 filter grayscale">📧</span>
+                        <i className="fa-solid fa-envelope absolute right-6 sm:right-8 top-1/2 -translate-y-1/2 text-lg sm:text-xl text-gray-400"></i>
                     </div>
                     <button
                         type="submit"

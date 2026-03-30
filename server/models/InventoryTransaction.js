@@ -6,7 +6,7 @@ const InventoryTransactionSchema = new mongoose.Schema({
   variant:         { type: String, default: 'default' },
   transaction_type: { 
     type: String, 
-    enum: ['stock_in', 'stock_out', 'adjustment', 'sale', 'return'],
+    enum: ['stock_in', 'stock_out', 'adjustment', 'sale', 'return', 'restock'],
     required: true 
   },
   quantity_change: { type: Number, required: true },
