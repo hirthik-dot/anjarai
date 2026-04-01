@@ -25,6 +25,9 @@ app.use(cors({
       'http://127.0.0.1:5174',
       'http://localhost:3000',
       'http://localhost:3001',
+      "https://anjaraipettifoods.vercel.app",
+    "https://anjaraipettifoods.com",
+    "https://www.anjaraipettifoods.com",
       process.env.CLIENT_URL,
       process.env.ADMIN_URL
     ].filter(Boolean);
@@ -48,6 +51,7 @@ app.use('/api/all-content',    require('./routes/all-content'));
 app.use('/api/navbar',         require('./routes/navbar'));
 app.use('/api/auth',           require('./routes/auth'));
 app.use('/api/auth/otp',       require('./routes/otp'));
+app.use('/api',                require('./routes/phoneOtp'));
 
 app.use('/api/products',       require('./routes/products'));
 app.use('/api/hero',           require('./routes/hero'));

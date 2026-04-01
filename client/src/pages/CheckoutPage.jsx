@@ -126,8 +126,8 @@ const CheckoutPage = () => {
                 },
                 prefill: {
                     name: form.name,
-                    email: user.email,
-                    contact: form.phone
+                    email: user.email || '',
+                    contact: form.phone || user.phone || ''
                 },
                 theme: { color: "#2d6a4f" }
             };

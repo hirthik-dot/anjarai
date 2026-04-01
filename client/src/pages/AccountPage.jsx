@@ -31,7 +31,7 @@ export default function AccountPage() {
             <h1 className="font-head text-2xl sm:text-4xl font-black text-dark mb-1">
               {user.name}
             </h1>
-            <p className="text-mid text-sm sm:text-base opacity-70 break-words">{user.email}</p>
+            <p className="text-mid text-sm sm:text-base opacity-70 break-words">{user.phone ? `+91 ${user.phone}` : user.email}</p>
           </div>
         </div>
 

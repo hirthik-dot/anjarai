@@ -102,7 +102,7 @@ const Header = () => {
                                     <div className="absolute right-0 top-full mt-2 w-[190px] bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,.12)] border border-gray-100 z-50">
                                         <div className="px-4 py-3 border-b border-gray-100">
                                             <p className="text-[12.5px] font-bold text-dark truncate">{user.name}</p>
-                                            <p className="text-[11px] text-mid truncate">{user.email}</p>
+                                            <p className="text-[11px] text-mid truncate">{user.phone ? `+91 ${user.phone}` : user.email}</p>
                                         </div>
                                         <button
                                             type="button"
@@ -226,7 +226,7 @@ const Header = () => {
                                         </div>
                                         <div className="min-w-0">
                                             <p className="text-[13px] font-bold text-dark truncate">{user.name}</p>
-                                            <p className="text-[11px] text-mid truncate">{user.email}</p>
+                                            <p className="text-[11px] text-mid truncate">{user.phone ? `+91 ${user.phone}` : user.email}</p>
                                         </div>
                                     </div>
                                     <button
