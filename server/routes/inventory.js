@@ -64,9 +64,19 @@ router.post('/adjust', protect, async (req, res) => {
     await syncProductTypeFromInventory(product_id);
 
     // Notify storefront to refresh cached all-content.
-    // Client listens for `product:updated` and refetches immediately when it arrives.
     try {
-      getIO().emit('product:updated', { _id: product_id });
+      const Product = require('../models/Product');
+      const { attachStockToProducts } = require('../utils/productStock');
+      const pDoc = await Product.findById(product_id);
+      if (pDoc) {
+        const [updatedProduct] = await attachStockToProducts([pDoc]);
+        getIO().emit('product:updated', { 
+          productId: updatedProduct._id,
+          stock: updatedProduct.stock_total,
+          stock_total: updatedProduct.stock_total,
+          stock_by_variant: updatedProduct.stock_by_variant
+        });
+      }
     } catch (_) {}
 
     res.json({ message: 'Stock updated successfully', currentStock: qtyAfter });

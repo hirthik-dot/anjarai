@@ -16,6 +16,7 @@ router.get('/', async (req, res) => {
     }
     const docs = await Product.find(query).sort('sort_order');
     const products = await attachStockToProducts(docs);
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -83,7 +84,17 @@ router.put('/:id', protect, async (req, res) => {
   try {
     const product = await Product.findOneAndUpdate({ id: req.params.id }, req.body, { new: true });
     if (!product) return res.status(404).json({ error: 'Product not found' });
-    getIO().emit('product:updated', product);
+    
+    // Attach current stock level to emit properly to clients
+    const [updatedProduct] = await attachStockToProducts([product]);
+    
+    getIO().emit('product:updated', { 
+      productId: product._id, 
+      stock: updatedProduct.stock_total,
+      stock_total: updatedProduct.stock_total,
+      stock_by_variant: updatedProduct.stock_by_variant
+    });
+    
     res.json({ message: 'Product updated' });
   } catch (err) {
     res.status(500).json({ error: err.message });

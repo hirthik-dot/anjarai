@@ -104,7 +104,7 @@ export const DataProvider = ({ children }) => {
     });
     
     const events = [
-      'product:created', 'product:updated', 'product:deleted',
+      'product:created', 'product:deleted',
       'hero:created', 'hero:updated', 'hero:deleted', 'hero:reordered',
       'navbar:updated', 'tagline:updated', 'closingbanner:updated', 
       'footer:updated', 'announcement:updated', 'marquee:updated',
@@ -112,6 +112,31 @@ export const DataProvider = ({ children }) => {
     ];
 
     events.forEach(ev => socket.on(ev, () => triggerRefresh(ev)));
+
+    // Handle product stock updates in-place
+    socket.on('product:updated', (payload) => {
+      // payload: { productId, stock, stock_total, stock_by_variant }
+      console.log('[REAL-TIME SYNC] product:updated detected for in-place update:', payload);
+      
+      // Update the main content state if the product exists
+      setContent(prev => {
+        if (!prev || !prev.products) return prev;
+        return {
+          ...prev,
+          products: prev.products.map(p => {
+            if (p._id === payload.productId || String(p._id) === String(payload.productId)) {
+              return { 
+                ...p, 
+                stock: payload.stock,
+                stock_total: payload.stock_total !== undefined ? payload.stock_total : payload.stock,
+                stock_by_variant: payload.stock_by_variant || p.stock_by_variant
+              };
+            }
+            return p;
+          })
+        };
+      });
+    });
 
     return () => socket.disconnect();
   }, [refreshContent]);

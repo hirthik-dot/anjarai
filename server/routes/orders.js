@@ -98,10 +98,43 @@ router.patch('/admin/:id', protect, async (req, res) => {
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({ error: 'No valid fields to update' });
     }
+    // Get order BEFORE update to check cancellation state
+    const oldOrder = await Order.findById(req.params.id);
+    if (!oldOrder) return res.status(404).json({ error: 'Order not found' });
+
     const order = await Order.findByIdAndUpdate(req.params.id, updates, { new: true })
       .populate('user', 'name email')
       .populate('items.product', 'name slug images id price');
-    if (!order) return res.status(404).json({ error: 'Order not found' });
+
+    // Handle stock restore if newly CANCELLED
+    if (order_status === 'CANCELLED' && oldOrder.order_status !== 'CANCELLED' && oldOrder.payment_status === 'PAID') {
+      try {
+        const { attachStockToProducts } = require('../utils/productStock');
+        const io = getIO();
+        for (const line of oldOrder.items) {
+          await deductInventoryForSale({
+            productId: line.product,
+            variant: line.variant || 'default',
+            qty: -line.qty, // negative to restore
+            reference: `cancel:${order._id}`,
+            performedBy: 'admin_cancel'
+          });
+          const pDoc = await Product.findById(line.product);
+          if (pDoc) {
+            const [updatedProduct] = await attachStockToProducts([pDoc]);
+            io.emit('product:updated', { 
+              productId: updatedProduct._id,
+              stock: updatedProduct.stock_total,
+              stock_total: updatedProduct.stock_total,
+              stock_by_variant: updatedProduct.stock_by_variant
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Failed to restore stock on cancel:', err);
+      }
+    }
+
     res.json(order);
   } catch (err) {
     console.error('Admin patch order error:', err);
@@ -297,9 +330,19 @@ router.post('/verify', requireUser, async (req, res) => {
 
     try {
       const io = getIO();
-      fresh.items.forEach((line) => {
-        io.emit('product:updated', { _id: line.product });
-      });
+      const { attachStockToProducts } = require('../utils/productStock');
+      for (const line of fresh.items) {
+        const pDoc = await Product.findById(line.product);
+        if (pDoc) {
+           const [updatedProduct] = await attachStockToProducts([pDoc]);
+           io.emit('product:updated', { 
+             productId: updatedProduct._id,
+             stock: updatedProduct.stock_total,
+             stock_total: updatedProduct.stock_total,
+             stock_by_variant: updatedProduct.stock_by_variant
+           });
+        }
+      }
     } catch (_) {}
 
     return res.json({ success: true, message: 'Payment verified successfully' });
