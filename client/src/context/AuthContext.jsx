@@ -14,8 +14,8 @@ export function AuthProvider({ children }) {
     } catch { return null }
   })
   const [loginOpen,  setLoginOpen]  = useState(false)
-  const [loginStep,  setLoginStep]  = useState(1)  // 1: name+phone, 2: OTP, 3: welcome
-  const [loginData,  setLoginData]  = useState({ name: '', phone: '' })
+  const [loginStep,  setLoginStep]  = useState(1)  // 1: name+email, 2: OTP, 3: welcome
+  const [loginData,  setLoginData]  = useState({ name: '', email: '' })
 
   const login = useCallback((userData, token) => {
     const payload = { ...userData, token }
@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
 
   const openLogin = useCallback(() => {
     setLoginStep(1)
-    setLoginData({ name: '', phone: '' })
+    setLoginData({ name: '', email: '' })
     setLoginOpen(true)
   }, [])
 
@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
     setLoginOpen(false)
     setTimeout(() => {
       setLoginStep(1)
-      setLoginData({ name: '', phone: '' })
+      setLoginData({ name: '', email: '' })
     }, 300)
   }, [])
 

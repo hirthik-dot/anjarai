@@ -2,10 +2,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '../context/AuthContext'
 
-// ── Step 1: Name + Phone form ────────────────────────────────────────────────
-function StepNamePhone({ onNext, defaultData }) {
+// ── Step 1: Name + Email form ────────────────────────────────────────────────
+function StepNameEmail({ onNext, defaultData }) {
   const { API } = useAuth()
-  const [form,    setForm]    = useState({ name: defaultData.name || '', phone: defaultData.phone || '' })
+  const [form,    setForm]    = useState({ name: defaultData.name || '', email: defaultData.email || '' })
   const [error,   setError]   = useState('')
   const [loading, setLoading] = useState(false)
   const nameRef = useRef(null)
@@ -17,20 +17,20 @@ function StepNamePhone({ onNext, defaultData }) {
     setError('')
 
     const name  = form.name.trim()
-    const phone = form.phone.trim().replace(/\s+/g, '')
+    const email = form.email.trim().toLowerCase()
     if (name.length < 2) return setError('Please enter your full name.')
-    if (!/^[6-9]\d{9}$/.test(phone)) return setError('Please enter a valid 10-digit Indian mobile number.')
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setError('Please enter a valid email address.')
 
     setLoading(true)
     try {
       const res  = await fetch(`${API}/send-otp`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ name, phone }),
+        body:    JSON.stringify({ name, email }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to send OTP. Please try again.')
-      onNext({ name, phone })
+      onNext({ name, email })
     } catch (err) {
       setError(err.message)
     } finally {
@@ -46,7 +46,7 @@ function StepNamePhone({ onNext, defaultData }) {
           Welcome to<br /><span className="text-green">Anjaraipetti</span>
         </h2>
         <p className="text-mid text-[13px] mt-2 leading-relaxed">
-          Enter your details to receive a login code via SMS
+          Enter your details to receive a login code via email
         </p>
       </div>
 
@@ -69,28 +69,17 @@ function StepNamePhone({ onNext, defaultData }) {
 
         <div>
           <label className="block text-[12.5px] font-bold text-dark mb-1.5 uppercase tracking-wide">
-            Mobile Number
+            Email Address
           </label>
-          <div className="flex items-center gap-0">
-            <span className="inline-flex items-center border-2 border-r-0 border-green-pale rounded-l-xl px-3 py-3 text-sm font-bold text-mid bg-gray-50 select-none">
-              +91
-            </span>
-            <input
-              type="tel"
-              value={form.phone}
-              onChange={e => {
-                // Only allow digits, max 10
-                const val = e.target.value.replace(/\D/g, '').slice(0, 10)
-                setForm(f => ({ ...f, phone: val }))
-              }}
-              placeholder="9876543210"
-              required
-              maxLength={10}
-              inputMode="numeric"
-              className="w-full border-2 border-green-pale rounded-r-xl px-4 py-3 text-sm font-body
-                         outline-none focus:border-green transition-colors placeholder:text-gray-300"
-            />
-          </div>
+          <input
+            type="email"
+            value={form.email}
+            onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+            placeholder="Enter your email address"
+            required
+            className="w-full border-2 border-green-pale rounded-xl px-4 py-3 text-sm font-body
+                       outline-none focus:border-green transition-colors placeholder:text-gray-300"
+          />
         </div>
 
         {error && (
@@ -108,13 +97,13 @@ function StepNamePhone({ onNext, defaultData }) {
         >
           {loading
             ? <><i className="fa-solid fa-spinner fa-spin mr-2"></i> Sending OTP...</>
-            : <><i className="fa-solid fa-mobile-screen mr-2"></i> Send OTP via SMS &rarr;</>
+            : <><i className="fa-solid fa-envelope mr-2"></i> Send OTP via Email &rarr;</>
           }
         </button>
       </form>
 
       <p className="text-center text-[11px] text-mid mt-5 leading-relaxed">
-        We'll send a 6-digit OTP to your phone via SMS. No password needed.
+        We'll send a 6-digit OTP to your email. No password needed.
       </p>
     </div>
   )
@@ -122,7 +111,7 @@ function StepNamePhone({ onNext, defaultData }) {
 
 
 // ── Step 2: OTP Verification — 6 individual digit boxes ─────────────────────
-function StepOtp({ phone, name, onSuccess, onBack }) {
+function StepOtp({ email, name, onSuccess, onBack }) {
   const { API } = useAuth()
   const [digits,    setDigits]    = useState(['', '', '', '', '', ''])
   const [error,     setError]     = useState('')
@@ -155,7 +144,7 @@ function StepOtp({ phone, name, onSuccess, onBack }) {
       const res  = await fetch(`${API}/verify-otp`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ name, phone, otp }),
+        body:    JSON.stringify({ name, email, otp }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -219,7 +208,7 @@ function StepOtp({ phone, name, onSuccess, onBack }) {
       const res  = await fetch(`${API}/send-otp`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ name, phone }),
+        body:    JSON.stringify({ name, email }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
@@ -234,16 +223,17 @@ function StepOtp({ phone, name, onSuccess, onBack }) {
     }
   }
 
-  const maskedPhone = phone.replace(/^(\d{2})\d{5}(\d{3})$/, '$1•••••$2')
+  // Mask email: show first 2 chars + ••• + domain
+  const maskedEmail = email.replace(/^(.{2})(.*)(@.+)$/, '$1•••$3')
 
   return (
     <div className="animate-fadeSlideIn">
       <div className="text-center mb-7">
-        <div className="text-5xl mb-3 text-green-600"><i className="fa-solid fa-mobile-screen-button"></i></div>
-        <h2 className="font-head text-[24px] font-bold text-dark">Verify your phone</h2>
+        <div className="text-5xl mb-3 text-green-600"><i className="fa-solid fa-envelope-open-text"></i></div>
+        <h2 className="font-head text-[24px] font-bold text-dark">Verify your email</h2>
         <p className="text-mid text-[13px] mt-2 leading-relaxed">
           We sent a 6-digit code to<br />
-          <span className="font-bold text-green">+91 {maskedPhone}</span>
+          <span className="font-bold text-green">{maskedEmail}</span>
         </p>
       </div>
 
@@ -295,7 +285,7 @@ function StepOtp({ phone, name, onSuccess, onBack }) {
           onClick={onBack}
           className="text-mid hover:text-green transition-colors font-semibold"
         >
-          ← Change number
+          ← Change email
         </button>
         {timer > 0 ? (
           <span className="text-mid">Resend in {timer}s</span>
@@ -311,7 +301,7 @@ function StepOtp({ phone, name, onSuccess, onBack }) {
       </div>
 
       <p className="text-center text-[11px] text-mid mt-5 leading-relaxed">
-        Didn't get it? Check if your phone has signal or request a new code.
+        Didn't get it? Check your spam folder or request a new code.
       </p>
     </div>
   )
@@ -358,8 +348,8 @@ export default function LoginModal() {
     login,
   } = useAuth()
 
-  const handleNamePhoneNext = ({ name, phone }) => {
-    setLoginData({ name, phone })
+  const handleNameEmailNext = ({ name, email }) => {
+    setLoginData({ name, email })
     setLoginStep(2)
   }
 
@@ -411,15 +401,15 @@ export default function LoginModal() {
           )}
 
           {loginStep === 1 && (
-            <StepNamePhone
-              onNext={handleNamePhoneNext}
+            <StepNameEmail
+              onNext={handleNameEmailNext}
               defaultData={loginData}
             />
           )}
 
           {loginStep === 2 && (
             <StepOtp
-              phone={loginData.phone}
+              email={loginData.email}
               name={loginData.name}
               onSuccess={handleOtpSuccess}
               onBack={() => setLoginStep(1)}
@@ -428,7 +418,7 @@ export default function LoginModal() {
 
           {loginStep === 3 && (
             <StepWelcome
-              name={loginData.name || loginData.phone}
+              name={loginData.name || loginData.email}
               onClose={closeLogin}
             />
           )}
