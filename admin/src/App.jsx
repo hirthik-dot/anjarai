@@ -5,7 +5,6 @@ import AdminLayout from './components/AdminLayout';
 // Pages
 import AdminLoginPage from './pages/AdminLoginPage';
 import DashboardPage from './pages/DashboardPage';
-import NavbarPage from './pages/NavbarPage';
 import ProductsPage from './pages/ProductsPage';
 import HeroSlidesPage from './pages/HeroSlidesPage';
 import AnnouncementPage from './pages/AnnouncementPage';
@@ -51,7 +50,6 @@ export default function App() {
           {/* Protected Routes inside Layout */}
           <Route element={<RequireAuth><AdminLayout /></RequireAuth>}>
             <Route path="/dashboard"         element={<DashboardPage />} />
-            <Route path="/navbar"            element={<NavbarPage />} />
             <Route path="/products"          element={<ProductsPage />} />
             <Route path="/hero"              element={<HeroSlidesPage />} />
             <Route path="/announcements"     element={<AnnouncementPage />} />

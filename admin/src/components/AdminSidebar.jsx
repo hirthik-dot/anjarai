@@ -10,7 +10,6 @@ import {
 const NAV_GROUPS = [
   { group: 'STORE CONTENT', items: [
     { icon: BarChart3,  label: 'Dashboard',     path: '/dashboard'     },
-    { icon: Compass,    label: 'Navbar Setup',  path: '/navbar'        },
     { icon: Box,        label: 'Products',      path: '/products'      },
     { icon: Tag,        label: 'Categories',    path: '/categories'    },
     { icon: ImageIcon,  label: 'Hero Slides',   path: '/hero'          },
