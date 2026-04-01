@@ -37,6 +37,7 @@ router.get('/', async (req, res) => {
 
     const products = await attachStockToProducts(productDocs);
 
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     res.json({
       products, heroSlides, announcements, tagline, trustItems, marqueeItems,
       categories, about, ads, closingBanner, videos, footer, navbar

@@ -4,10 +4,10 @@ import { io } from 'socket.io-client';
 
 const DataContext = createContext(null);
 
-const fetchWithTimeout = (url, timeoutMs) => {
+const fetchWithTimeout = (url, options = {}, timeoutMs) => {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
-  return fetch(url, { signal: controller.signal })
+  return fetch(url, { ...options, signal: controller.signal })
     .then(r => { clearTimeout(id); return r; })
     .catch(e => { clearTimeout(id); throw e; });
 };
@@ -30,7 +30,7 @@ export const DataProvider = ({ children }) => {
     const MAX = 4;
     const timeout = 12000 + (attempt - 1) * 6000; // 12s, 18s, 24s, 30s
     try {
-      const res = await fetchWithTimeout(`${API_URL}/api/all-content`, timeout);
+      const res = await fetchWithTimeout(`${API_URL}/api/all-content`, { cache: 'no-store' }, timeout);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const fresh = await res.json();
       if (fresh && typeof fresh === 'object') {
