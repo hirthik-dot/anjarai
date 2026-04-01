@@ -22,13 +22,8 @@ const ProductCard = ({ product }) => {
         rating,
         reviews,
         type,
-        category,
         variants,
         stock_total: stockTotalRaw,
-        is_veg,
-        veg,
-        isVeg,
-        isVegatable,
         weight,
     } = product;
 
@@ -37,7 +32,6 @@ const ProductCard = ({ product }) => {
 
     const stockTotal = stockTotalRaw ?? 0;
     const outOfStock = type === 'sold' || stockTotal === 0;
-    const lowStock = stockTotal > 0 && stockTotal <= 5;
 
     const numericPrice = Number(price ?? 0);
     const numericOriginal = originalPrice != null ? Number(originalPrice) : null;
@@ -48,9 +42,6 @@ const ProductCard = ({ product }) => {
 
     const hasVariants = Array.isArray(variants) && variants.length > 0;
     const isAdded = addedItemName === id;
-
-    const isVegDish = Boolean(is_veg || veg || isVeg || type === 'veg' || type === 'veg');
-    const categoryLabel = category || (Array.isArray(product.collections) ? product.collections[0] : '') || '';
 
     const handleAddToCart = (selectedVariant) => {
         if (outOfStock) return;
@@ -85,184 +76,100 @@ const ProductCard = ({ product }) => {
         if (!isAdded) handleAddToCart();
     };
 
+    // Calculate tomorrow date for generic delivery text
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const deliveryDate = tomorrow.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+
+    // Format numbers like ₹50,499
+    const formattedPrice = numericPrice?.toLocaleString('en-IN');
+    const formattedOriginal = numericOriginal?.toLocaleString('en-IN');
+
     return (
         <div
             onClick={() => navigate(`/products/${slug}`)}
-            className="bg-white border border-[color:var(--brand-border)] rounded-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-card)] hover:-translate-y-[4px] hover:shadow-[var(--shadow-green)] transition-all duration-200 flex flex-col cursor-pointer h-full"
+            className="flex flex-row bg-white border border-gray-200 hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] transition-shadow cursor-pointer w-full rounded-xl overflow-visible relative group h-full"
         >
-            <div className="relative aspect-square bg-[rgba(216,243,220,0.4)] overflow-hidden">
+            {/* Left Image Area */}
+            <div className="w-[120px] sm:w-[160px] md:w-[200px] flex-shrink-0 bg-gray-50/50 p-2 sm:p-4 flex flex-col items-center justify-center relative rounded-l-xl overflow-hidden border-r border-gray-100">
                 {mainImage ? (
                     <img
                         src={mainImage}
                         alt={name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                        className="w-full h-full object-contain mix-blend-multiply group-hover:scale-[1.03] transition-transform duration-300"
                         loading="lazy"
                     />
                 ) : null}
-
-                {/* Veg badge */}
-                {isVegDish && (
-                    <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
-                        <span
-                            className="w-2.5 h-2.5 rounded-full"
-                            style={{ background: 'var(--brand-primary)' }}
-                        />
-                        <span
-                            className="px-2 py-0.5 rounded-full text-[10px] font-black text-white uppercase tracking-widest"
-                            style={{ background: 'var(--brand-primary)' }}
-                        >
-                            VEG
-                        </span>
-                    </div>
-                )}
-
-                {/* Wishlist (visual only) */}
-                <div className="absolute top-3 right-3 z-10">
-                    <button
-                        type="button"
-                        onClick={(e) => e.stopPropagation()}
-                        className="w-10 h-10 rounded-full bg-white/80 backdrop-blur flex items-center justify-center"
-                        aria-label="Wishlist"
-                    >
-                        <span style={{ color: 'var(--brand-primary)' }}>♥</span>
-                    </button>
-                </div>
-
-                {/* Category pill */}
-                {categoryLabel ? (
-                    <div className="absolute bottom-3 left-3 z-10">
-                        <span
-                            className="px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-widest"
-                            style={{
-                                border: '2px solid var(--brand-primary)',
-                                color: 'var(--brand-primary)',
-                                background: 'rgba(255,255,255,0.85)',
-                            }}
-                        >
-                            {categoryLabel}
-                        </span>
-                    </div>
-                ) : null}
-
-                {/* Sale badge */}
-                {sale && numericOriginal && discountPct != null && discountPct > 0 && (
-                    <div className="absolute top-3 left-3 z-10 mt-10">
-                        <span
-                            className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white"
-                            style={{ background: 'var(--brand-gold-dark)' }}
-                        >
-                            {discountPct}% OFF
-                        </span>
-                    </div>
-                )}
-
-                {/* Out of stock overlay */}
-                {outOfStock && (
-                    <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] flex flex-col items-center justify-center gap-4 px-6">
-                        <div className="w-[72px] h-[72px] rounded-full bg-[rgba(0,0,0,0.10)] flex items-center justify-center">
-                            <i className="fa-solid fa-box text-[34px]" style={{ color: 'rgba(255,255,255,0.9)' }} />
-                        </div>
-                        <button
-                            type="button"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                            }}
-                            className="h-[44px] rounded-full px-6 font-black text-sm uppercase tracking-widest"
-                            style={{
-                                background: 'rgba(255,255,255,0.18)',
-                                color: 'rgba(255,255,255,0.95)',
-                                border: '1px solid rgba(255,255,255,0.35)',
-                            }}
-                        >
-                            Notify Me
-                        </button>
-                    </div>
-                )}
-
-                {/* Low stock badge */}
-                {!outOfStock && lowStock && (
-                    <div className="absolute top-3 right-3 z-10">
-                        <span
-                            className="px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white"
-                            style={{ background: 'var(--brand-gold-dark)' }}
-                        >
-                            {t('Only {{n}} left').replace('{{n}}', String(stockTotal))}
-                        </span>
-                    </div>
-                )}
             </div>
 
-            <div className="p-3 flex flex-col flex-1">
-                {/* Title */}
-                <h3 className="font-head text-[15px] leading-tight line-clamp-2 text-dark font-bold mb-1.5">
-                    {name}
-                </h3>
+            {/* Right Info Area */}
+            <div className="flex-1 p-3 sm:p-4 md:p-5 flex flex-col overflow-hidden justify-between">
+                <div>
+                    {/* Title */}
+                    <h3 className="text-[14px] sm:text-[16px] md:text-[18px] text-[#0f1111] leading-tight line-clamp-3 hover:text-[#c45500] transition-colors" style={{fontFamily: 'sans-serif'}}>
+                        {name}
+                    </h3>
 
-                {/* Weight / variant line */}
-                <div className="text-[13px] text-mid opacity-70 line-clamp-1 mb-2">
-                    {weight ? weight : hasVariants ? t('Select weight') : t('') || ''}
-                </div>
+                    {/* Weight/Variant Info */}
+                    <div className="mt-1 flex gap-2 text-xs sm:text-sm text-gray-500 font-sans">
+                        {weight ? <span>{weight}</span> : hasVariants ? <span className="text-[#007185] italic font-medium">{t('Multiple options available')}</span> : null}
+                    </div>
 
-                {/* Rating row */}
-                <div className="flex items-center justify-between gap-3 mb-2">
-                    <div className="flex items-center gap-1 text-[12px]">
-                        <span style={{ color: 'var(--brand-gold)' }} className="font-black">
-                            ★
+                    {/* Rating */}
+                    <div className="flex items-center gap-1.5 mt-1 sm:mt-1.5 flex-wrap">
+                        <span className="text-[#de7921] text-sm sm:text-base leading-none">
+                            {'★'.repeat(Math.round(rating || 4))}{'☆'.repeat(5 - Math.round(rating || 4))}
                         </span>
-                        <span className="text-[12px] font-black" style={{ color: 'var(--brand-gold)' }}>
-                            {Number(rating ?? 0).toFixed(1)}
+                        <span className="text-[#007185] text-xs sm:text-sm hover:underline leading-none pt-0.5">
+                            {reviews || 0}
                         </span>
-                        <span className="text-mid text-[11px] font-semibold opacity-70">({reviews ?? 0})</span>
+                        <span className="text-[10px] sm:text-xs text-gray-500 hidden sm:inline ml-1">• 1K+ bought in past month</span>
+                    </div>
+
+                    {/* Price */}
+                    <div className="mt-2 flex items-baseline flex-wrap gap-1.5 sm:gap-2">
+                        <span className="text-[20px] sm:text-[26px] font-medium text-[#0f1111] flex items-start leading-[1]">
+                            <span className="text-[12px] sm:text-[14px] mt-1 mr-0.5">₹</span>
+                            {formattedPrice}
+                        </span>
+                        {numericOriginal && numericOriginal > numericPrice ? (
+                            <span className="text-[#565959] text-[11px] sm:text-[13px] leading-none flex gap-[3px] items-center pt-1 mt-auto">
+                                <span className="opacity-80">M.R.P:</span>
+                                <span className="line-through">₹{formattedOriginal}</span>
+                                {discountPct && <span className="hidden sm:inline">({discountPct}% off)</span>}
+                            </span>
+                        ) : null}
+                    </div>
+                    {discountPct > 0 && <div className="sm:hidden text-green-700 text-[11px] font-bold mt-0.5">{discountPct}% off - Deal</div>}
+
+                    {/* Delivery details (Amazon style) */}
+                    <div className="mt-1 sm:mt-2">
+                        <p className="text-[11px] sm:text-[13px] text-[#0f1111]">
+                            <span className="text-[#007185] font-medium">FREE delivery</span> <span className="font-bold">{deliveryDate}</span>
+                        </p>
+                        <p className="text-[10px] sm:text-[12px] text-[#565959] mt-0.5">Or fastest delivery <b className="text-gray-900">Tomorrow</b></p>
                     </div>
                 </div>
 
-                {/* Price row */}
-                <div className="flex items-baseline gap-2 mb-3">
-                    <span
-                        className="text-[20px] font-head font-black"
-                        style={{ color: 'var(--brand-primary)' }}
-                    >
-                        ₹{numericPrice}
-                    </span>
-                    {numericOriginal ? (
-                        <span className="text-[12px] text-mid line-through opacity-60 font-semibold">
-                            ₹{numericOriginal}
-                        </span>
-                    ) : null}
-                    {discountPct != null && discountPct > 0 ? (
-                        <span
-                            className="px-2 py-0.5 rounded-full text-[12px] font-black"
-                            style={{ background: 'rgba(230,57,70,0.12)', color: '#E63946' }}
-                        >
-                            {discountPct}% OFF
-                        </span>
-                    ) : null}
-                </div>
-
-                {/* Variants Overlay */}
-                <div className="relative">
+                {/* Add to Cart Area */}
+                <div className="mt-4 relative w-full sm:w-auto sm:self-start">
+                    {/* Variants Popover */}
                     {showVariants && hasVariants && (
-                        <div className="absolute left-0 right-0 bottom-[110%] bg-white shadow-[0_10px_40px_rgba(0,0,0,0.15)] rounded-xl border border-gray-100 p-2 z-20 max-h-[190px] overflow-y-auto">
-                            <div className="flex items-center justify-between px-2 pb-2 border-b border-gray-50 mb-2">
-                                <span className="text-[11px] font-black text-mid/70 uppercase tracking-widest">
-                                    {t('Select Weight:')}
+                        <div className="absolute bottom-[calc(100%+5px)] left-0 w-[200px] sm:w-[240px] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.15)] rounded-2xl border border-gray-100 p-2 z-20 max-h-[190px] overflow-y-auto font-sans animate-in fade-in zoom-in-95 duration-200">
+                            <div className="flex items-center justify-between px-2 pb-2 border-b border-gray-100 mb-2">
+                                <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">
+                                    {t('Select Variant')}
                                 </span>
                                 <button
                                     type="button"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setShowVariants(false);
-                                    }}
-                                    className="text-dark font-black"
-                                >
-                                    ✕
-                                </button>
+                                    onClick={(e) => { e.stopPropagation(); setShowVariants(false); }}
+                                    className="text-gray-400 font-bold hover:text-black hover:bg-gray-100 rounded-full w-6 h-6 flex items-center justify-center transition-colors"
+                                >✕</button>
                             </div>
-                            <div className="flex flex-col gap-1 relative z-20">
+                            <div className="flex flex-col gap-1">
                                 {variants.map((v, idx) => {
                                     const vName = typeof v === 'object' ? v.name : v;
-                                    const vPrice =
-                                        typeof v === 'object' && v.price != null ? v.price : numericPrice;
+                                    const vPrice = typeof v === 'object' && v.price != null ? v.price : numericPrice;
                                     return (
                                         <button
                                             key={idx}
@@ -272,12 +179,10 @@ const ProductCard = ({ product }) => {
                                                 handleAddToCart(v);
                                                 setShowVariants(false);
                                             }}
-                                            className="flex justify-between items-center w-full px-3 py-2 hover:bg-[rgba(76,175,80,0.12)] rounded-lg transition-colors text-left"
+                                            className="flex flex-col sm:flex-row justify-between sm:items-center w-full px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors text-left gap-1"
                                         >
-                                            <span className="text-[12px] font-bold text-dark">{vName}</span>
-                                            <span className="text-[12px] font-black" style={{ color: 'var(--brand-primary)' }}>
-                                                ₹{vPrice}
-                                            </span>
+                                            <span className="text-[13px] font-medium text-[#0f1111]">{vName}</span>
+                                            <span className="text-[13px] font-bold text-[#B12704]">₹{vPrice?.toLocaleString('en-IN')}</span>
                                         </button>
                                     );
                                 })}
@@ -285,25 +190,19 @@ const ProductCard = ({ product }) => {
                         </div>
                     )}
 
-                    {/* Add to Cart button */}
-                    <button
-                        type="button"
-                        onClick={handleButtonClick}
-                        disabled={outOfStock}
-                        className="w-full h-[44px] rounded-[14px] font-black text-[14px] uppercase tracking-widest transition-transform active:scale-[0.96]"
-                        style={{
-                            background: 'var(--brand-gold)',
-                            color: 'var(--brand-primary-dark)',
-                        }}
-                    >
-                        {outOfStock
-                            ? 'Notify Me'
-                            : isAdded
-                              ? t('Added!')
-                              : hasVariants
-                                ? t('Select Options')
-                                : t('Add to Cart')}
-                    </button>
+                    {!outOfStock ? (
+                        <button
+                            type="button"
+                            onClick={handleButtonClick}
+                            className={`px-5 sm:px-6 py-2 rounded-full font-sans text-xs sm:text-[14px] text-[#0f1111] shadow-sm transition-all focus:ring-2 focus:ring-[#e77600] active:ring-transparent ${isAdded ? 'bg-green-100 hover:bg-green-200 border border-green-300' : 'bg-[#ffd814] hover:bg-[#F7CA00] border border-[#FCD200]'}`}
+                        >
+                            {isAdded ? "Added to cart" : hasVariants ? "See Options" : "Add to cart"}
+                        </button>
+                    ) : (
+                        <div className="text-[#cc0c39] font-bold text-sm">
+                            Currently unavailable.
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

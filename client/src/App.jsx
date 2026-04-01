@@ -14,6 +14,7 @@ import BottomNav from './components/BottomNav'
 import HomePage from './pages/HomePage'
 import CollectionPage from './pages/CollectionPage'
 import ProductDetailPage from './pages/ProductDetailPage'
+import SearchPage from './pages/SearchPage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import CheckoutPage from './pages/CheckoutPage'
 import OrderSuccessPage from './pages/OrderSuccessPage'
@@ -79,6 +80,7 @@ export default function App() {
                 <Route path="/account" element={<AccountPage />} />
                 <Route path="/orders" element={<MyOrdersPage />} />
                 <Route path="/orders/:id" element={<OrderDetailPage />} />
+                <Route path="/search" element={<SearchPage />} />
                 <Route path="*" element={<ComingSoonPage />} />
               </Routes>
             </main>

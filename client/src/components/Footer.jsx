@@ -57,9 +57,7 @@ const Footer = () => {
                             { label: 'Terms and Conditions', href: '/terms' },
                             { label: 'Privacy Policy', href: '/privacy' },
                             { label: 'Shipping Policy', href: '/shipping' },
-                            { label: 'Return, Refund Policy', href: '/refund' },
-                            { label: 'Cookie Policy', href: '/cookie' },
-                            { label: 'Cancellation Policy', href: '/cancellation' },
+                            { label: 'Cancellation, Return and Refund Policy', href: '/refund' },
                         ].map((link, i) => (
                             link.divider ? (
                                 <li key={i} className="my-1">
@@ -105,18 +103,16 @@ const Footer = () => {
                     <h4 className="font-head text-lg md:text-xl font-black text-white mb-8 md:mb-12 tracking-wide uppercase flex items-center gap-3">
                         <span className="w-1.5 h-1.5 rounded-full bg-sale" /> {t('Contact Us')}
                     </h4>
-                    <div className="space-y-6 md:space-y-10">
-                        {footer.whatsapp_link && (
-                             <a href={footer.whatsapp_link} className="flex items-center gap-5 group w-fit" target="_blank" rel="noopener noreferrer">
+                     <div className="space-y-6 md:space-y-10">
+                             <a href="https://wa.me/919994617120" className="flex items-center gap-5 group w-fit" target="_blank" rel="noopener noreferrer">
                                 <div className="w-12 md:w-14 h-12 md:h-14 bg-green/10 rounded-2xl flex items-center justify-center text-green group-hover:bg-green group-hover:text-white transition-all duration-350 shadow-lg shadow-green/5">
                                     <i className="fab fa-whatsapp text-xl md:text-2xl" />
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-[11px] md:text-[12px] font-black text-white/30 tracking-[0.2em] mb-1">WhatsApp</span>
-                                    <span className="text-sm md:text-base font-black text-white group-hover:text-green transition-colors">{footer.whatsapp_number}</span>
+                                    <span className="text-sm md:text-base font-black text-white group-hover:text-green transition-colors">+91 9994617120</span>
                                 </div>
                              </a>
-                        )}
 
                         {footer.instagram_handle && (
                              <a href={footer.instagram_url} className="flex items-center gap-5 group w-fit" target="_blank" rel="noopener noreferrer">

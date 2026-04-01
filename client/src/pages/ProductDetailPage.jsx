@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useCart } from '../context/CartContext';
 import { useLang } from '../context/LanguageContext';
+import ProductGrid from '../components/ProductGrid';
 
 function stockForVariant(product, selectedVariant) {
     const map = product.stock_by_variant || {};
@@ -18,7 +19,7 @@ function stockForVariant(product, selectedVariant) {
 }
 
 const ProductDetailPage = () => {
-    const { getBySlug } = useData();
+    const { getBySlug, products } = useData();
     const { slug } = useParams();
     const navigate = useNavigate();
     const { addItem, addedItemName } = useCart();
@@ -266,6 +267,14 @@ const ProductDetailPage = () => {
                     </button>
                 </div>
             </div>
+
+            {/* You Might Also Like */}
+            {products && products.length > 0 && (
+                <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-14 py-16 border-t border-gray-100 mt-10">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-dark mb-8 text-left">You might also like <span className="text-gray-400 font-normal text-sm ml-2">Sponsored ⓘ</span></h2>
+                    <ProductGrid products={products.filter(p => p.id !== product.id && p.category === product.category).slice(0, 4)} />
+                </div>
+            )}
 
             {/* Reviews Section Placeholder */}
             <div className="bg-light py-16 sm:py-24 md:py-36">
