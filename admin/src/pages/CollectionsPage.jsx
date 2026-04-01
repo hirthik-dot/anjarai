@@ -69,14 +69,14 @@ export default function CollectionsPage() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="font-head text-4xl font-black text-brand-dark tracking-tight">🏷️ Collections</h2>
-          <p className="text-brand-mid text-xs font-black uppercase tracking-[3px] mt-1.5 opacity-40">Manage product categories & groupings</p>
+          <h2 className="font-head text-4xl font-black text-brand-dark tracking-tight">🏷️ Categories</h2>
+          <p className="text-brand-mid text-xs font-black uppercase tracking-[3px] mt-1.5 opacity-40">Manage product categories — also displayed on the homepage</p>
         </div>
         <button 
           onClick={() => openModal()}
           className="bg-brand-green hover:bg-brand-green-light text-white font-black rounded-full px-8 py-3.5 text-sm uppercase tracking-widest flex items-center gap-2 shadow-xl shadow-brand-green/30 transition-all hover:scale-105"
         >
-          <Plus size={18} /> ADD COLLECTION
+          <Plus size={18} /> ADD CATEGORY
         </button>
       </div>
 
@@ -110,14 +110,14 @@ export default function CollectionsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-brand-dark/40 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white rounded-[32px] w-full max-w-lg p-10 shadow-2xl relative overflow-hidden">
             <h3 className="font-head text-3xl font-black text-brand-dark mb-8 flex items-center gap-3">
-              {editing ? '📝 Edit Collection' : '✨ New Collection'}
+              {editing ? '📝 Edit Category' : '✨ New Category'}
             </h3>
             
             <form onSubmit={handleSave} className="space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <label className="text-[10px] font-black uppercase tracking-widest text-brand-mid flex items-center gap-2">
-                    🏷️ Collection Name
+                    🏷️ Category Name
                   </label>
                   <input 
                     required type="text" value={form.name} onChange={handleNameChange}
@@ -162,7 +162,7 @@ export default function CollectionsPage() {
 
               <div className="flex justify-end gap-4 pt-4">
                 <button type="button" onClick={() => setModalOpen(false)} className="px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest text-brand-mid hover:bg-gray-100 transition-all">Cancel</button>
-                <button type="submit" className="bg-brand-green hover:bg-brand-green-light text-white font-black rounded-full px-8 py-3 text-xs uppercase tracking-widest shadow-lg shadow-brand-green/20 transition-all">Save Collection</button>
+                <button type="submit" className="bg-brand-green hover:bg-brand-green-light text-white font-black rounded-full px-8 py-3 text-xs uppercase tracking-widest shadow-lg shadow-brand-green/20 transition-all">Save Category</button>
               </div>
             </form>
           </div>

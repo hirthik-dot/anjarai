@@ -12,7 +12,7 @@ import AnnouncementPage from './pages/AnnouncementPage';
 import TaglinePage from './pages/TaglinePage';
 import TrustBarPage from './pages/TrustBarPage';
 import MarqueePage from './pages/MarqueePage';
-import CategoryCardsPage from './pages/CategoryCardsPage';
+import CategoriesPage from './pages/CollectionsPage';
 import AboutStripPage from './pages/AboutStripPage';
 import AdBannersPage from './pages/AdBannersPage';
 import ClosingBannerPage from './pages/ClosingBannerPage';
@@ -20,7 +20,6 @@ import VideoSectionPage from './pages/VideoSectionPage';
 import NewsletterPage from './pages/NewsletterPage';
 import FooterPage from './pages/FooterPage';
 import OffersPage from './pages/OffersPage';
-import CollectionsPage from './pages/CollectionsPage';
 import InventoryPage from './pages/InventoryPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
@@ -59,7 +58,7 @@ export default function App() {
             <Route path="/tagline"           element={<TaglinePage />} />
             <Route path="/trust"             element={<TrustBarPage />} />
             <Route path="/marquee"           element={<MarqueePage />} />
-            <Route path="/categories"        element={<CategoryCardsPage />} />
+            <Route path="/categories"        element={<CategoriesPage />} />
             <Route path="/about"             element={<AboutStripPage />} />
             <Route path="/ads"               element={<AdBannersPage />} />
             <Route path="/closing-banner"    element={<ClosingBannerPage />} />
@@ -67,7 +66,6 @@ export default function App() {
             <Route path="/newsletter"        element={<NewsletterPage />} />
             <Route path="/footer"            element={<FooterPage />} />
             <Route path="/offers"            element={<OffersPage />} />
-            <Route path="/collections"       element={<CollectionsPage />} />
             <Route path="/inventory"         element={<InventoryPage />} />
             <Route path="/profile"           element={<AdminProfilePage />} />
             <Route path="/change-password"   element={<ChangePasswordPage />} />

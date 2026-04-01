@@ -5,7 +5,7 @@ const Announcement  = require('../models/Announcement');
 const Tagline       = require('../models/Tagline');
 const TrustItem     = require('../models/TrustItem');
 const MarqueeItem   = require('../models/MarqueeItem');
-const CategoryCard  = require('../models/CategoryCard');
+const Collection    = require('../models/Collection');
 const AboutStrip    = require('../models/AboutStrip');
 const AdBanner      = require('../models/AdBanner');
 const ClosingBanner = require('../models/ClosingBanner');
@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
       Tagline.findOne(),
       TrustItem.find({ is_active: true }).sort({ sort_order: 1 }),
       MarqueeItem.find({ is_active: true }).sort({ sort_order: 1 }),
-      CategoryCard.find({ is_active: true }).sort({ sort_order: 1 }),
+      Collection.find({ is_active: true }).sort({ sort_order: 1 }),
       AboutStrip.findOne(),
       AdBanner.find({ is_active: true }).sort({ sort_order: 1 }),
       ClosingBanner.findOne(),

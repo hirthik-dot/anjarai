@@ -12,7 +12,7 @@ const NAV_GROUPS = [
     { icon: BarChart3,  label: 'Dashboard',     path: '/dashboard'     },
     { icon: Compass,    label: 'Navbar Setup',  path: '/navbar'        },
     { icon: Box,        label: 'Products',      path: '/products'      },
-    { icon: Tag,        label: 'Collections',   path: '/collections'   },
+    { icon: Tag,        label: 'Categories',    path: '/categories'    },
     { icon: ImageIcon,  label: 'Hero Slides',   path: '/hero'          },
     { icon: Megaphone,  label: 'Announcement',  path: '/announcements' },
     { icon: Leaf,       label: 'Tagline Bar',   path: '/tagline'       },
@@ -20,7 +20,6 @@ const NAV_GROUPS = [
   { group: 'SECTIONS', items: [
     { icon: Award,      label: 'Trust Bar',     path: '/trust'         },
     { icon: Sparkles,   label: 'Marquee Strip', path: '/marquee'       },
-    { icon: LayoutList, label: 'Categories',    path: '/categories'    },
     { icon: Heart,      label: 'About Strip',   path: '/about'         },
     { icon: Info,       label: 'Ad Banners',    path: '/ads'           },
     { icon: Flag,       label: 'Closing Banner', path: '/closing-banner' },

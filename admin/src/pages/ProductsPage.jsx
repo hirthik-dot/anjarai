@@ -15,6 +15,7 @@ export default function ProductsPage() {
   const [view,     setView]     = useState('grid'); // 'grid' or 'list'
   const [search,   setSearch]   = useState('');
   const [filter,   setFilter]   = useState({ collection: 'all', type: 'all', status: 'all' });
+  const [availableCollections, setAvailableCollections] = useState([]);
   
   const [modalOpen, setModalOpen]     = useState(false);
   const [editing,   setEditing]       = useState(null);
@@ -30,12 +31,16 @@ export default function ProductsPage() {
     } catch (err) { toast.error('Failed to load products'); }
   };
 
-  useEffect(() => { fetchProducts(); }, []);
+  useEffect(() => {
+    fetchProducts();
+    // Fetch collections for filter dropdown
+    api.get('/collections').then(res => setAvailableCollections(res.data)).catch(() => {});
+  }, []);
 
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
       const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.id.toLowerCase().includes(search.toLowerCase());
-      const matchColl   = filter.collection === 'all' || p.collections.includes(filter.collection);
+      const matchColl   = filter.collection === 'all' || (p.collections && p.collections.includes(filter.collection));
       const matchType   = filter.type === 'all' || p.type === filter.type;
       const matchStatus = filter.status === 'all' || (filter.status === 'active' ? p.is_active : !p.is_active);
       return matchSearch && matchColl && matchType && matchStatus;
@@ -90,9 +95,9 @@ export default function ProductsPage() {
             value={filter.collection} onChange={(e) => setFilter(f => ({ ...f, collection: e.target.value }))}
             className="bg-brand-light/50 border-2 border-brand-green-pale rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-[10px] sm:text-xs font-black uppercase tracking-wider sm:tracking-widest outline-none text-brand-mid focus:border-brand-green transition-all flex-1 sm:flex-none min-w-0"
           >
-            <option value="all">Collections: ALL</option>
-            {['best-sellers', 'mega-combo-offers', 'baby-organic', 'instant-health-drink', 'skin-hair'].map(c => (
-              <option key={c} value={c}>{c.toUpperCase().replace(/-/g, ' ')}</option>
+            <option value="all">Categories: ALL</option>
+            {availableCollections.map(c => (
+              <option key={c.slug} value={c.slug}>{c.name.toUpperCase()}</option>
             ))}
           </select>
           <select 
