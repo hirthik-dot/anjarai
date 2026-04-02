@@ -24,7 +24,7 @@ transporter.verify((error, success) => {
   } else {
     console.log('✅ Brevo SMTP is connected and ready!');
     
-    // Try sending a test email
+    // Try sending a test emaill
     transporter.sendMail({
       from: `Test <${process.env.BREVO_SMTP_LOGIN}>`,
       to: process.env.BREVO_SMTP_LOGIN,

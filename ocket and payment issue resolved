@@ -1,0 +1,12 @@
+[33mb49c79f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix Razorpay amount error and Socket.io Render free tier issue
+[33m00df229[m  new collections added
+[33m4fd8453[m  resolved socket
+[33me033e26[m final corrections
+[33mcede90c[m  added categories
+[33m0ec3b6d[m added policies
+[33mbef2480[m  amazon tiles
+[33mf96c4b4[m  otp to mail
+[33mb1f2942[m  cors rectified
+[33m3e7b418[m  final product i guess
+[33mf3a69ac[m  back to node mailer
+[33md2704e9[m  intial
