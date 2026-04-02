@@ -220,7 +220,7 @@ router.post('/create', requireUser, async (req, res) => {
     }
 
     const rzpOrder = await razorpay.orders.create({
-      amount: total_amount * 100,
+      amount: Math.round(total_amount * 100),
       currency: 'INR',
       receipt: `receipt_${Date.now()}_${req.user.id.substring(0, 5)}`,
     });

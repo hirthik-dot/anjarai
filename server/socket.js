@@ -20,7 +20,9 @@ module.exports = {
         },
         methods: ["GET", "POST"],
         credentials: true
-      }
+      },
+      transports: ['polling', 'websocket'],
+      allowUpgrades: true
     });
     return io;
   },

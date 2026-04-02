@@ -36,9 +36,10 @@ const OffersCarousel = ({ showHeader = true } = {}) => {
     // Subscribe to promo changes from admin panel for instant home updates.
     const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:4000';
     const socket = io(socketUrl, {
-      reconnectionAttempts: 3,
-      timeout: 5000,
-      transports: ['websocket', 'polling'],
+      transports: ['polling'],
+      upgrade: false,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 2000
     });
 
     const onOffersChanged = () => loadOffers();

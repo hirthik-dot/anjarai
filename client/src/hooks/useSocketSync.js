@@ -8,6 +8,10 @@ const useSocketSync = () => {
     useEffect(() => {
         const socket = io('http://localhost:5000', {
             withCredentials: true,
+            transports: ['polling'],
+            upgrade: false,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 2000
         });
 
         socket.on('connect', () => {

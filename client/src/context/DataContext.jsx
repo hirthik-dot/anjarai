@@ -83,10 +83,10 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:4000';
     const socket = io(socketUrl, {
+      transports: ['polling'],
+      upgrade: false,
       reconnectionAttempts: 5,
-      reconnectionDelay: 5000,
-      transports: ['websocket', 'polling'],
-      timeout: 10000
+      reconnectionDelay: 2000
     });
 
     const triggerRefresh = (event) => {
