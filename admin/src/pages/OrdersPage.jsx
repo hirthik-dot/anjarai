@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { ShoppingBag, RefreshCw } from 'lucide-react';
+import { ShoppingBag, RefreshCw, Filter } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
 const STATUS_ORDER = ['PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
@@ -9,7 +9,37 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(null);
+  const [filterStatus, setFilterStatus] = useState('ALL');
+  const [filterDate, setFilterDate] = useState('ALL');
   const toast = useToast();
+
+  const filteredOrders = useMemo(() => {
+    return orders.filter(o => {
+      // Status Filter
+      if (filterStatus === 'UNDELIVERED') {
+        if (o.order_status === 'DELIVERED' || o.order_status === 'CANCELLED') return false;
+      } else if (filterStatus !== 'ALL') {
+        if (o.order_status !== filterStatus) return false;
+      }
+
+      // Date Filter
+      if (filterDate !== 'ALL') {
+        const orderDate = new Date(o.createdAt);
+        const now = new Date();
+        const diffMs = now - orderDate;
+        const diffDays = diffMs / (1000 * 60 * 60 * 24);
+        
+        // Use midnight comparison for slightly more logical "Today"
+        const isToday = orderDate.toDateString() === now.toDateString();
+        
+        if (filterDate === 'TODAY' && !isToday) return false;
+        if (filterDate === 'LAST_7_DAYS' && diffDays > 7) return false;
+        if (filterDate === 'LAST_30_DAYS' && diffDays > 30) return false;
+      }
+
+      return true;
+    });
+  }, [orders, filterStatus, filterDate]);
 
   const load = async () => {
     try {
@@ -57,13 +87,49 @@ export default function OrdersPage() {
         </button>
       </div>
 
+      <div className="flex flex-col sm:flex-row gap-4 mb-8 border-t border-brand-green-pale/40 pt-6">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1 text-brand-mid mr-2">
+            <Filter className="w-4 h-4" />
+            <span className="text-[10px] uppercase font-black tracking-widest lg:hidden xl:inline">Filter</span>
+          </div>
+          
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="text-[10px] font-black uppercase tracking-widest border-2 border-brand-green-pale rounded-xl px-3 py-2.5 bg-white text-brand-dark outline-none focus:border-brand-green hover:border-brand-green transition-colors cursor-pointer"
+          >
+            <option value="ALL">All Statuses</option>
+            <option value="UNDELIVERED">Undelivered (Active)</option>
+            {STATUS_ORDER.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+
+          <select
+            value={filterDate}
+            onChange={(e) => setFilterDate(e.target.value)}
+            className="text-[10px] font-black uppercase tracking-widest border-2 border-brand-green-pale rounded-xl px-3 py-2.5 bg-white text-brand-dark outline-none focus:border-brand-green hover:border-brand-green transition-colors cursor-pointer"
+          >
+            <option value="ALL">All Time</option>
+            <option value="TODAY">Today</option>
+            <option value="LAST_7_DAYS">Last 7 Days</option>
+            <option value="LAST_30_DAYS">Last 30 Days</option>
+          </select>
+          
+          <div className="text-[10px] font-black tracking-widest uppercase text-brand-mid/70 ml-2">
+            Showing {filteredOrders.length} orders
+          </div>
+        </div>
+      </div>
+
       {loading ? (
         <p className="text-brand-mid font-bold italic py-20 text-center">Loading orders…</p>
       ) : orders.length === 0 ? (
         <p className="text-brand-mid font-bold italic py-20 text-center">No orders yet.</p>
+      ) : filteredOrders.length === 0 ? (
+        <p className="text-brand-mid font-bold italic py-20 text-center">No orders match the selected filters.</p>
       ) : (
         <div className="space-y-4">
-          {orders.map((o) => (
+          {filteredOrders.map((o) => (
             <div
               key={o._id}
               className="bg-white rounded-2xl sm:rounded-3xl border border-gray-100/80 shadow-sm overflow-hidden"

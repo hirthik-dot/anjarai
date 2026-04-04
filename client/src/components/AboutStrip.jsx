@@ -24,16 +24,10 @@ const AboutStrip = () => {
                         <img
                             src={about.image_url}
                             alt={about.title}
-                            className="rounded-2xl w-full h-[240px] sm:h-[300px] lg:h-[360px] object-cover shadow-[0_12px_40px_rgba(0,0,0,.12)]"
+                            className="rounded-2xl w-full h-[180px] sm:h-[220px] lg:h-[280px] object-cover shadow-lg"
                         />
 
-                        {/* Quality Badge */}
-                        <div className="absolute -bottom-4 -right-2 sm:-bottom-6 sm:-right-6 md:bottom-2 md:-right-8 bg-white rounded-xl sm:rounded-[24px] p-3 sm:p-5 flex flex-col items-center gap-1 sm:gap-2 shadow-2xl animate-float font-head">
-                            <span className="text-2xl sm:text-4xl">🎖️</span>
-                            <span className="text-[9px] sm:text-xs font-black text-dark uppercase tracking-[0.2em] text-center">
-                                100% <br /> {t('Lab Approved')}
-                            </span>
-                        </div>
+
                     </div>
 
                     {/* Right Column - Content */}
@@ -44,7 +38,7 @@ const AboutStrip = () => {
                         <h2 className="font-head text-2xl sm:text-3xl lg:text-[34px] font-bold leading-[1.2] mb-3 sm:mb-3.5">
                             {about.title}
                         </h2>
-                        <p className="text-mid text-[13.5px] sm:text-[14.5px] leading-[1.75] mb-4 sm:mb-5.5">
+                        <p className="text-mid text-[13.5px] sm:text-[14px] leading-[1.6] mb-4 sm:mb-5.5 line-clamp-4">
                             {about.body}
                         </p>
 

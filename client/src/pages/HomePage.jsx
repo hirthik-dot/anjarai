@@ -24,11 +24,36 @@ const SkeletonCard = () => (
     </div>
 );
 
-const SkeletonGrid = ({ count = 4 }) => (
-    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 px-4 md:px-0">
-        {Array.from({ length: count }).map((_, i) => <SkeletonCard key={i} />)}
-    </div>
-);
+const SkeletonGrid = ({ count = 4, horizontal = false }) => {
+    if (horizontal) {
+        return (
+            <div className="relative w-full">
+                <div className="flex overflow-x-auto gap-4 lg:gap-6 px-4 md:px-0 scrollbar-hide pb-4 snap-x snap-mandatory">
+                    {Array.from({ length: count }).map((_, i) => (
+                        <div key={i} className="w-[calc(100vw-32px)] sm:w-[45vw] lg:w-[300px] xl:w-[320px] shrink-0 snap-center sm:snap-start">
+                            <SkeletonCard />
+                        </div>
+                    ))}
+                </div>
+                {/* Mobile scroll indicator */}
+                <div className="md:hidden flex items-center justify-center gap-2 mt-2 pb-2 text-[10px] text-gray-400 uppercase tracking-widest font-black opacity-80">
+                    <span className="animate-pulse">Swipe to explore</span>
+                    <i className="fas fa-arrow-right animate-pulse"></i>
+                </div>
+                {/* Edge fade */}
+                <div className="pointer-events-none absolute top-0 bottom-0 right-0 w-12 bg-gradient-to-l from-white to-transparent z-10" />
+            </div>
+        );
+    }
+    
+    return (
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 px-4 md:px-0">
+            {Array.from({ length: count }).map((_, i) => (
+                <SkeletonCard key={i} />
+            ))}
+        </div>
+    );
+};
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -46,14 +71,14 @@ const HomePage = () => {
 
     return (
         <div className="animate-in fade-in duration-1000">
-            <MarqueeStrip />
             <HeroSlider />
             <TrustBar />
+            <MarqueeStrip />
             <CategoryCards />
 
             {/* Best Sellers Section */}
-            <section className="max-w-[1400px] mx-auto py-8 md:py-12 px-6">
-                <div className="flex justify-between items-end mb-8 md:mb-12">
+            <section className="max-w-[1400px] mx-auto py-4 md:py-6 px-6">
+                <div className="flex justify-between items-end mb-4 md:mb-6">
                     <div>
                         <span className="text-warm text-[12px] font-black uppercase tracking-[0.3em] mb-3 flex items-center gap-3">
                             <span className="w-10 h-px bg-warm" /> {t('Bestsellers')}
@@ -69,26 +94,14 @@ const HomePage = () => {
                         {t('View all products')} <span className="group-hover:translate-x-2 transition-transform duration-300">→</span>
                     </button>
                 </div>
-                {isInitialLoad ? <SkeletonGrid count={4} /> : bestSellers.length > 0 ? <ProductGrid products={bestSellers} /> : null}
-                <button
-                    onClick={() => navigate('/collections/best-seller')}
-                    className="md:hidden w-full mt-10 bg-transparent text-green border-2 border-green/10 rounded-full py-4 font-black text-xs uppercase tracking-widest"
-                >
-                    {t('View all products →')}
-                </button>
+                {isInitialLoad ? <SkeletonGrid count={4} horizontal={true} /> : bestSellers.length > 0 ? <ProductGrid products={bestSellers} horizontal={true} /> : null}
             </section>
 
-            {/* Gold banner */}
-            <div
-                className="bg-[var(--brand-gold)] text-[color:var(--brand-primary-dark)] text-center font-black tracking-wide py-3.5"
-                style={{ fontSize: 14 }}
-            >
-                🚚 Free delivery on orders above ₹499
-            </div>
+
 
             {/* New Arrivals */}
-            <section className="max-w-[1400px] mx-auto py-8 md:py-12 px-6">
-                <div className="flex justify-between items-end mb-8 md:mb-12">
+            <section className="max-w-[1400px] mx-auto py-4 md:py-6 px-6">
+                <div className="flex justify-between items-end mb-4 md:mb-6">
                     <div>
                         <span className="text-warm text-[12px] font-black uppercase tracking-[0.3em] mb-3 flex items-center gap-3">
                             <span className="w-10 h-px bg-warm" /> New
@@ -99,24 +112,24 @@ const HomePage = () => {
                     </div>
                 </div>
 
-                {isInitialLoad ? <SkeletonGrid count={4} /> : newArrivals.length > 0 ? <ProductGrid products={newArrivals} /> : null}
+                {isInitialLoad ? <SkeletonGrid count={4} horizontal={true} /> : newArrivals.length > 0 ? <ProductGrid products={newArrivals} horizontal={true} /> : null}
             </section>
 
             <AdBanner />
 
             {/* Middle Statement Section */}
-            <section className="bg-white py-8 md:py-12 text-center group">
+            <section className="bg-white py-4 md:py-8 text-center group">
                 <div className="max-w-[900px] mx-auto px-6">
-                    <div className="mb-6 md:mb-8 text-5xl md:text-7xl animate-bounce-slow text-warm"><i className="fa-solid fa-heart"></i></div>
-                    <h2 className="font-head text-3xl md:text-5xl font-black text-dark leading-[1.1] mb-6 md:mb-8 tracking-tight">
+                    <div className="mb-4 md:mb-6 text-4xl md:text-5xl animate-bounce-slow text-warm"><i className="fa-solid fa-heart"></i></div>
+                    <h2 className="font-head text-2xl md:text-4xl font-black text-dark leading-[1.1] mb-4 md:mb-5 tracking-tight">
                         {t('Pure. Natural. Made with')} <br /> <span className="text-green underline underline-offset-12 decoration-black/5">{t('The Anjaraipetti')}</span>
                     </h2>
-                    <p className="text-mid text-base md:text-xl font-medium leading-[1.8] mb-14 max-w-[650px] mx-auto opacity-70">
+                    <p className="text-mid text-sm md:text-lg font-medium leading-[1.6] mb-8 max-w-[650px] mx-auto opacity-70">
                         {t('We source only the finest organic ingredients and follow traditional homemade recipes to ensure your baby gets the best nutrition possible.')} <i className="fa-solid fa-leaf"></i>
                     </p>
                     <button
                         onClick={() => navigate('/collections/all')}
-                        className="bg-dark text-white rounded-full px-12 md:px-16 py-5 md:py-6 font-black text-xs md:text-sm uppercase tracking-widest shadow-2xl hover:bg-green hover:-translate-y-1 transition-all duration-300 active:scale-95"
+                        className="bg-dark text-white rounded-full px-8 md:px-12 py-3.5 md:py-4 font-black text-[10px] md:text-xs uppercase tracking-widest shadow-xl hover:bg-green hover:-translate-y-1 transition-all duration-300 active:scale-95"
                     >
                         {t('Visit Full Shop →')}
                     </button>
@@ -126,8 +139,8 @@ const HomePage = () => {
             <AboutStrip />
 
             {/* Special Promo Offers Section */}
-            <section className="max-w-[1400px] mx-auto py-8 md:py-12 px-6">
-                <div className="flex justify-between items-end mb-8 md:mb-12">
+            <section className="max-w-[1400px] mx-auto py-4 md:py-6 px-6">
+                <div className="flex justify-between items-end mb-4 md:mb-6">
                     <div>
                         <span className="text-warm text-[12px] font-black uppercase tracking-[0.3em] mb-3 flex items-center gap-3">
                             <span className="w-10 h-px bg-warm" /> {t('Save More')}
@@ -144,17 +157,11 @@ const HomePage = () => {
                     </button>
                 </div>
                 <OffersCarousel showHeader={false} />
-                <button
-                    onClick={() => navigate('/collections/special-promo-offers')}
-                    className="md:hidden w-full mt-10 bg-transparent text-green border-2 border-green/10 rounded-full py-4 font-black text-xs uppercase tracking-widest"
-                >
-                    View all promo offers →
-                </button>
             </section>
 
             {/* All Products Section */}
-            <section className="max-w-[1400px] mx-auto py-8 md:py-12 px-6 md:pb-12">
-                <div className="flex justify-between items-end mb-8 md:mb-12">
+            <section className="max-w-[1400px] mx-auto py-4 md:py-6 px-6 md:pb-8">
+                <div className="flex justify-between items-end mb-4 md:mb-6">
                     <div>
                         <span className="text-warm text-[12px] font-black uppercase tracking-[0.3em] mb-3 flex items-center gap-3">
                             <span className="w-10 h-px bg-warm" /> {t('Full Range')}
@@ -170,13 +177,25 @@ const HomePage = () => {
                         {t('Explore all products')} <span className="group-hover:translate-x-2 transition-transform duration-300">→</span>
                     </button>
                 </div>
-                {isInitialLoad ? <SkeletonGrid count={8} /> : allProducts.length > 0 ? <ProductGrid products={allProducts} /> : null}
-                <button
-                    onClick={() => navigate('/collections/all')}
-                    className="md:hidden w-full mt-10 bg-transparent text-green border-2 border-green/10 rounded-full py-4 font-black text-xs uppercase tracking-widest"
-                >
-                    {t('Explore all products →')}
-                </button>
+                {isInitialLoad ? <SkeletonGrid count={8} horizontal={true} /> : allProducts.length > 0 ? <ProductGrid products={allProducts} horizontal={true} /> : null}
+            </section>
+
+            {/* FSSAI License Banner */}
+            <section className="bg-light/50 py-6 md:py-10 border-t border-[rgba(0,0,0,0.03)]">
+                <div className="max-w-[1400px] w-full mx-auto px-6 text-center flex flex-col items-center">
+                    <h2 className="font-head text-xl md:text-3xl font-black text-dark mb-4 tracking-wide">
+                        CERTIFIED & <span className="text-green italic">TRUSTED</span>
+                    </h2>
+                    <p className="text-mid max-w-[500px] mb-6 text-sm opacity-80">
+                        {t('We adhere to the highest standards of food safety and quality. Your health and trust are our top priorities.')}
+                    </p>
+                    <img 
+                        src="/fssai.jpeg" 
+                        alt="FSSAI License" 
+                        loading="lazy"
+                        className="rounded-xl md:rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] w-full max-w-[90%] md:max-w-[800px] object-contain border border-[rgba(0,0,0,0.04)] hover:scale-[1.01] transition-transform duration-500" 
+                    />
+                </div>
             </section>
 
             <ClosingBanner />

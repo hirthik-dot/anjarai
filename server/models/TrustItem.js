@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const TrustItemSchema = new mongoose.Schema({
   icon:        { type: String, required: true },
+  image_url:   { type: String },
   title:       { type: String, required: true },
   subtitle:    { type: String },
   is_active:   { type: Boolean, default: true },

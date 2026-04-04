@@ -92,7 +92,7 @@ const OffersCarousel = ({ showHeader = true } = {}) => {
   };
 
   return (
-    <section className="max-w-[1400px] mx-auto px-6 pb-8">
+    <section className="max-w-[1400px] mx-auto px-6 pb-4">
       <div className="flex items-center justify-between gap-4 mb-4">
         <div>
           {showHeader && (
@@ -138,9 +138,9 @@ const OffersCarousel = ({ showHeader = true } = {}) => {
             Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="w-[320px] sm:w-[360px] shrink-0 bg-white rounded-[26px] border border-gray-100 overflow-hidden animate-pulse"
+                className="w-[280px] sm:w-[300px] shrink-0 bg-white rounded-[26px] border border-gray-100 overflow-hidden animate-pulse"
               >
-                <div className="h-[160px] bg-gray-100" />
+                <div className="h-[140px] bg-gray-100" />
                 <div className="p-5 space-y-3">
                   <div className="h-4 bg-gray-100 rounded-full w-3/4" />
                   <div className="h-4 bg-gray-100 rounded-full w-1/2" />
@@ -158,9 +158,9 @@ const OffersCarousel = ({ showHeader = true } = {}) => {
                 key={offer._id}
                 type="button"
                 onClick={() => goToOffer(offer)}
-                className="shrink-0 snap-start w-[320px] sm:w-[360px] text-left border border-gray-100 bg-white rounded-[26px] overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                className="shrink-0 snap-start w-[280px] sm:w-[300px] text-left border border-gray-100 bg-white rounded-[26px] overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
-                <div className="relative h-[190px] bg-green-pale/20 overflow-hidden">
+                <div className="relative h-[150px] bg-green-pale/20 overflow-hidden">
                   {offer.image_url ? (
                     <img
                       src={offer.image_url}
@@ -202,11 +202,19 @@ const OffersCarousel = ({ showHeader = true } = {}) => {
         {/* Edge fades */}
         {!loading && activeOffers.length > 0 && (
           <>
-            <div className="pointer-events-none absolute top-0 bottom-0 left-0 w-10 bg-gradient-to-r from-white to-transparent" />
-            <div className="pointer-events-none absolute top-0 bottom-0 right-0 w-10 bg-gradient-to-l from-white to-transparent" />
+            <div className="pointer-events-none absolute top-0 bottom-0 left-0 w-8 bg-gradient-to-r from-white to-transparent z-10" />
+            <div className="pointer-events-none absolute top-0 bottom-0 right-0 w-8 bg-gradient-to-l from-white to-transparent z-10" />
           </>
         )}
       </div>
+
+      {/* Mobile scroll indicator */}
+      {!loading && activeOffers.length > 0 && (
+        <div className="md:hidden flex items-center justify-center gap-2 mt-2 text-[10px] text-gray-400 uppercase tracking-widest font-black opacity-80">
+          <span className="animate-pulse">Swipe to explore</span>
+          <i className="fas fa-arrow-right animate-pulse"></i>
+        </div>
+      )}
     </section>
   );
 };

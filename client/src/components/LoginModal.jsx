@@ -40,8 +40,8 @@ function StepNameEmail({ onNext, defaultData }) {
 
   return (
     <div className="animate-fadeSlideIn">
-      <div className="text-center mb-7">
-        <div className="text-5xl mb-3 text-green-600"><i className="fa-solid fa-leaf"></i></div>
+      <div className="text-center mb-7 flex flex-col items-center">
+        <img src="/1774867642834.png" alt="Anjaraipetti" className="h-12 sm:h-14 mb-4 object-contain" />
         <h2 className="font-head text-[26px] font-bold text-dark leading-tight">
           Welcome to<br /><span className="text-green">Anjaraipetti</span>
         </h2>

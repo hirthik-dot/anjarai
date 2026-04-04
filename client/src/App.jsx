@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
 import AnnouncementBar from './components/AnnouncementBar'
+import TaglineBar from './components/TaglineBar'
 import Navbar from './components/Navbar'
 import CartDrawer from './components/CartDrawer'
 import LoginModal from './components/LoginModal'
@@ -50,6 +51,10 @@ export default function App() {
             <div className="relative min-h-screen flex flex-col font-body">
             <div className="relative z-[95]">
               <AnnouncementBar />
+            </div>
+
+            <div className="relative z-[94]">
+              <TaglineBar />
             </div>
             
             <div className="sticky top-0 left-0 right-0 z-[100]">

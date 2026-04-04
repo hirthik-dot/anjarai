@@ -148,7 +148,12 @@ input, textarea, select {
 .overflow-y-auto,
 .overflow-x-auto {
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+}
+.overflow-y-auto {
+  overscroll-behavior-y: contain;
+}
+.overflow-x-auto {
+  touch-action: pan-y;
 }
 
 /* Better touch targets on mobile */

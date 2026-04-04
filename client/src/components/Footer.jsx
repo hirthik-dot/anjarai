@@ -28,9 +28,14 @@ const Footer = () => {
                     </p>
 
                     <div className="flex items-center gap-4 md:gap-6">
-                        {footer.instagram_url && (
-                             <a href={footer.instagram_url} target="_blank" rel="noopener noreferrer" className="w-10 md:w-12 h-10 md:h-12 border border-white/10 rounded-full flex items-center justify-center text-white/50 hover:bg-green hover:text-white hover:border-green hover:-translate-y-1 hover:shadow-2xl hover:shadow-green/40 transition-all duration-300 backdrop-blur-sm group">
-                                <i className="fab fa-instagram text-lg md:text-xl transition-transform group-hover:scale-110" />
+                        {footer.email && (
+                             <a href={`mailto:${footer.email}`} className="w-10 md:w-12 h-10 md:h-12 border border-white/10 rounded-full flex items-center justify-center text-white/50 hover:bg-sale hover:text-white hover:border-sale hover:-translate-y-1 hover:shadow-2xl hover:shadow-sale/40 transition-all duration-300 backdrop-blur-sm group">
+                                <i className="fas fa-envelope text-lg md:text-xl transition-transform group-hover:scale-110" />
+                             </a>
+                        )}
+                        {!footer.email && (
+                             <a href="mailto:anjaraipettifoods@gmail.com" className="w-10 md:w-12 h-10 md:h-12 border border-white/10 rounded-full flex items-center justify-center text-white/50 hover:bg-sale hover:text-white hover:border-sale hover:-translate-y-1 hover:shadow-2xl hover:shadow-sale/40 transition-all duration-300 backdrop-blur-sm group">
+                                <i className="fas fa-envelope text-lg md:text-xl transition-transform group-hover:scale-110" />
                              </a>
                         )}
                         {footer.facebook_url && (
@@ -57,7 +62,7 @@ const Footer = () => {
                             { label: 'Terms and Conditions', href: '/terms' },
                             { label: 'Privacy Policy', href: '/privacy' },
                             { label: 'Shipping Policy', href: '/shipping' },
-                            { label: 'Cancellation, Return and Refund Policy', href: '/refund' },
+                            { label: 'Return and Refund Policy', href: '/refund' },
                         ].map((link, i) => (
                             link.divider ? (
                                 <li key={i} className="my-1">
@@ -114,17 +119,15 @@ const Footer = () => {
                                 </div>
                              </a>
 
-                        {footer.instagram_handle && (
-                             <a href={footer.instagram_url} className="flex items-center gap-5 group w-fit" target="_blank" rel="noopener noreferrer">
-                                <div className="w-12 md:w-14 h-12 md:h-14 bg-warm/10 rounded-2xl flex items-center justify-center text-warm group-hover:bg-warm group-hover:text-white transition-all duration-350 shadow-lg shadow-warm/5">
-                                    <i className="fab fa-instagram text-xl md:text-2xl" />
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-[11px] md:text-[12px] font-black text-white/30 tracking-[0.2em] mb-1">Instagram</span>
-                                    <span className="text-sm md:text-base font-black text-white group-hover:text-warm transition-colors">{footer.instagram_handle}</span>
-                                </div>
-                             </a>
-                        )}
+                        <a href={`mailto:${footer.email || 'anjaraipettifoods@gmail.com'}`} className="flex items-center gap-5 group w-fit">
+                            <div className="w-12 md:w-14 h-12 md:h-14 bg-sale/10 rounded-2xl flex items-center justify-center text-sale group-hover:bg-sale group-hover:text-white transition-all duration-350 shadow-lg shadow-sale/5">
+                                <i className="fas fa-envelope text-xl md:text-2xl" />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[11px] md:text-[12px] font-black text-white/30 tracking-[0.2em] mb-1">EMAIL</span>
+                                <span className="text-sm md:text-base font-black text-white group-hover:text-sale transition-colors">{footer.email || 'anjaraipettifoods@gmail.com'}</span>
+                            </div>
+                        </a>
 
                         <div className="flex items-center gap-5 group w-fit cursor-default">
                             <div className="w-12 md:w-14 h-12 md:h-14 bg-gray-500/10 rounded-2xl flex items-center justify-center text-gray-400 group-hover:bg-white/10 transition-all duration-350 shadow-lg">

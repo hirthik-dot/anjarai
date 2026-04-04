@@ -6,13 +6,14 @@ import api from '../utils/api';
 import { useToast } from '../components/Toast';
 import { Plus, Trash2, Edit2, GripVertical, Save, X, Award } from 'lucide-react';
 import { motion, Reorder } from 'framer-motion';
+import ImageUploader from '../components/ImageUploader';
 
 export default function TrustBarPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-  const [form, setForm] = useState({ icon: '🌿', title: '', subtitle: '', is_active: true });
+  const [form, setForm] = useState({ icon: '🌿', image_url: '', title: '', subtitle: '', is_active: true });
   
   const toast = useToast();
 
@@ -38,7 +39,7 @@ export default function TrustBarPage() {
         toast.success('Trust item added');
       }
       setEditing(null);
-      setForm({ icon: '🌿', title: '', subtitle: '', is_active: true });
+      setForm({ icon: '🌿', image_url: '', title: '', subtitle: '', is_active: true });
       fetchItems();
     } catch (err) { toast.error('Save failed'); }
   };
@@ -82,6 +83,13 @@ export default function TrustBarPage() {
                 />
               </div>
               <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-brand-mid/50 ml-2">Custom Image (Overrides Icon)</label>
+                <ImageUploader 
+                  value={form.image_url} 
+                  onChange={(url) => setForm(f => ({ ...f, image_url: url }))} 
+                />
+              </div>
+              <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-brand-mid/50 ml-2">Title *</label>
                 <input 
                   value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))}
@@ -105,7 +113,7 @@ export default function TrustBarPage() {
                   <Save size={18} /> {editing ? 'UPDATE' : 'ADD ITEM'}
                 </button>
                 {editing && (
-                  <button type="button" onClick={() => { setEditing(null); setForm({ icon: '🌿', title: '', subtitle: '', is_active: true }); }} className="w-16 bg-gray-100 text-brand-mid rounded-2xl flex items-center justify-center hover:bg-brand-sale/10 hover:text-brand-sale transition-all">
+                  <button type="button" onClick={() => { setEditing(null); setForm({ icon: '🌿', image_url: '', title: '', subtitle: '', is_active: true }); }} className="w-16 bg-gray-100 text-brand-mid rounded-2xl flex items-center justify-center hover:bg-brand-sale/10 hover:text-brand-sale transition-all">
                     <X size={24} />
                   </button>
                 )}
@@ -127,8 +135,12 @@ export default function TrustBarPage() {
                 className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-6 group hover:shadow-xl transition-all cursor-grab active:cursor-grabbing"
               >
                 <div className="text-brand-mid/20 group-hover:text-brand-green transition-colors"><GripVertical size={24} /></div>
-                <div className="w-16 h-16 rounded-2xl bg-brand-light flex items-center justify-center text-3xl shadow-inner border border-gray-100 group-hover:bg-brand-green-pale/30 group-hover:text-brand-green transition-all">
-                  {item.icon}
+                <div className="w-16 h-16 rounded-2xl bg-brand-light flex items-center justify-center text-3xl shadow-inner border border-gray-100 group-hover:bg-brand-green-pale/30 group-hover:text-brand-green transition-all overflow-hidden relative">
+                  {item.image_url ? (
+                    <img src={item.image_url} alt="" className="w-full h-full object-contain p-2" />
+                  ) : (
+                    item.icon
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="font-head text-lg font-bold text-brand-dark leading-none">{item.title}</h4>

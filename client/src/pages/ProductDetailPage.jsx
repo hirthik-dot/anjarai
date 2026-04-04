@@ -240,19 +240,12 @@ const ProductDetailPage = () => {
                 className="md:hidden fixed left-0 right-0 z-[1005] bg-white/95 backdrop-blur border-t border-gray-100 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]"
                 style={{ bottom: 'calc(64px + env(safe-area-inset-bottom, 0px))' }}
             >
-                <div className="grid grid-cols-3 gap-0 px-3 py-2">
-                    <button
-                        type="button"
-                        onClick={() => {}}
-                        className="h-[48px] rounded-xl font-black text-[12px] tracking-[0.2em] uppercase border-2 border-[color:var(--brand-primary)] text-[color:var(--brand-primary)] bg-white active:scale-[0.98]"
-                    >
-                        Add to Wishlist
-                    </button>
+                <div className="grid grid-cols-2 gap-3 px-3 py-2">
                     <button
                         type="button"
                         onClick={handleAddToCart}
                         disabled={product.type === 'sold' || outOfStock}
-                        className="mx-2 h-[48px] rounded-xl font-black text-[12px] tracking-[0.2em] uppercase border-2 border-[color:var(--brand-gold)] text-[color:var(--brand-primary-dark)] bg-white active:scale-[0.98] disabled:opacity-60"
+                        className="h-[48px] rounded-xl font-black text-[12px] tracking-[0.2em] uppercase border-2 border-[color:var(--brand-gold)] text-[color:var(--brand-primary-dark)] bg-white active:scale-[0.98] disabled:opacity-60"
                         style={{ color: 'var(--brand-primary-dark)' }}
                     >
                         Add to Cart
