@@ -48,8 +48,8 @@ const translations = {
   // ── Middle Statement Section ────────────────────────────────
   'Pure. Natural. Made with': 'தூய்மை. இயற்கை. உருவாக்கியது',
   'The Anjaraipetti': 'அஞ்சரைப்பெட்டி',
-  'We source only the finest organic ingredients and follow traditional homemade recipes to ensure your baby gets the best nutrition possible.':
-    'உங்கள் குழந்தைக்கு சிறந்த ஊட்டச்சத்து கிடைப்பதை உறுதிசெய்ய, நாங்கள் சிறந்த இயற்கை பொருட்களை மட்டுமே பயன்படுத்தி பாரம்பரிய வீட்டு செய்முறைகளைப் பின்பற்றுகிறோம்.',
+  'We source only the finest organic ingredients and follow traditional homemade recipes to ensure you get the best authentic taste possible.':
+    'உங்களுக்கு சிறந்த உண்மையான சுவை கிடைப்பதை உறுதிசெய்ய, நாங்கள் சிறந்த இயற்கை பொருட்களை மட்டுமே பயன்படுத்தி பாரம்பரிய வீட்டு செய்முறைகளைப் பின்பற்றுகிறோம்.',
   'Visit Full Shop →': 'முழு கடையைப் பார் →',
 
   // ── About Strip ─────────────────────────────────────────────
@@ -63,7 +63,7 @@ const translations = {
   'Watch How We Craft': 'நாங்கள் எப்படி தயாரிக்கிறோம் என்று பாருங்கள்',
   'The': '',
   'Purest': 'தூய்மையான',
-  'Baby Food': 'குழந்தை உணவு',
+  'Masalas': 'மசாலாக்கள்',
   'Transparency is at the heart of everything we do. See our preparation process, ingredients, and the love that goes into every batch.':
     'வெளிப்படைத்தன்மை எங்கள் அனைத்து செயல்களிலும் மையமாக உள்ளது. எங்கள் தயாரிப்பு செயல்முறை, பொருட்கள் மற்றும் ஒவ்வொரு தொகுதியிலும் செலுத்தப்படும் அன்பைப் பாருங்கள்.',
   'Official Video': 'அதிகாரப்பூர்வ வீடியோ',

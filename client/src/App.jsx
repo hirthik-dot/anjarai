@@ -13,6 +13,7 @@ import Newsletter from './components/Newsletter'
 import Footer from './components/Footer'
 import BottomNav from './components/BottomNav'
 import HomePage from './pages/HomePage'
+import CollectionsListPage from './pages/CollectionsListPage'
 import CollectionPage from './pages/CollectionPage'
 import ProductDetailPage from './pages/ProductDetailPage'
 import SearchPage from './pages/SearchPage'
@@ -71,6 +72,7 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/about" element={<AboutPage />} />
+                <Route path="/collections" element={<CollectionsListPage />} />
                 <Route path="/collections/special-promo-offers" element={<SpecialPromoOffersPage />} />
                 <Route path="/collections/:slug" element={<CollectionPage />} />
                 <Route path="/products/:slug" element={<ProductDetailPage />} />

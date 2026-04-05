@@ -7,7 +7,7 @@ import { MdHome, MdGridView, MdSearch, MdShoppingCart, MdPerson } from 'react-ic
 
 const tabs = [
   { key: 'home', label: 'Home', to: '/', Icon: MdHome },
-  { key: 'categories', label: 'Categories', to: '/collections/all', Icon: MdGridView },
+  { key: 'categories', label: 'Categories', to: '/collections', Icon: MdGridView },
   { key: 'search', label: 'Search', to: '/search', Icon: MdSearch },
   { key: 'cart', label: 'Cart', to: '__cart__', Icon: MdShoppingCart },
   { key: 'account', label: 'Account', to: '/account', Icon: MdPerson },
@@ -28,7 +28,7 @@ export default function BottomNav() {
     if (!to) return false;
     if (location.pathname === to) return true;
     // Keep "Categories" highlighted for collection routes
-    if (to === '/collections/all' && location.pathname.startsWith('/collections/')) return true;
+    if (to === '/collections' && location.pathname.startsWith('/collections')) return true;
     return false;
   };
 

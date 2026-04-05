@@ -30,7 +30,7 @@ const SkeletonGrid = ({ count = 4, horizontal = false }) => {
             <div className="relative w-full">
                 <div className="flex overflow-x-auto gap-4 lg:gap-6 px-4 md:px-0 scrollbar-hide pb-4 snap-x snap-mandatory">
                     {Array.from({ length: count }).map((_, i) => (
-                        <div key={i} className="w-[calc(100vw-32px)] sm:w-[45vw] lg:w-[300px] xl:w-[320px] shrink-0 snap-center sm:snap-start">
+                        <div key={i} className="w-[calc(100vw-32px)] sm:w-[45vw] lg:w-[400px] xl:w-[480px] shrink-0 snap-center sm:snap-start">
                             <SkeletonCard />
                         </div>
                     ))}
@@ -125,7 +125,7 @@ const HomePage = () => {
                         {t('Pure. Natural. Made with')} <br /> <span className="text-green underline underline-offset-12 decoration-black/5">{t('The Anjaraipetti')}</span>
                     </h2>
                     <p className="text-mid text-sm md:text-lg font-medium leading-[1.6] mb-8 max-w-[650px] mx-auto opacity-70">
-                        {t('We source only the finest organic ingredients and follow traditional homemade recipes to ensure your baby gets the best nutrition possible.')} <i className="fa-solid fa-leaf"></i>
+                        {t('We source only the finest organic ingredients and follow traditional homemade recipes to ensure you get the best authentic taste possible.')} <i className="fa-solid fa-leaf"></i>
                     </p>
                     <button
                         onClick={() => navigate('/collections/all')}

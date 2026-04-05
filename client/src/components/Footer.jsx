@@ -20,7 +20,7 @@ const Footer = () => {
                 {/* Column 1 - Brand */}
                 <div className="flex flex-col animate-in slide-in-from-bottom duration-700">
                     <NavLink to="/" className="font-head text-2xl md:text-3xl font-black text-white mb-6 md:mb-10 tracking-tight flex items-center gap-3">
-                        <span className="w-10 h-10 rounded-full bg-green text-white flex items-center justify-center text-lg shadow-lg shadow-green/10">TA</span>
+                        <img src="/1774867642834.png" alt="TA Logo" className="w-10 md:w-12 h-10 md:h-12 rounded-full object-cover object-center shadow-lg shadow-white/10" />
                         The <span className="text-warm underline decoration-white/10 underline-offset-4 decoration-dashed">Anjaraipetti</span>
                     </NavLink>
                     <p className="text-white/60 text-sm md:text-base leading-[1.8] font-medium max-w-[340px] mb-12 drop-shadow-sm opacity-90 transition-opacity hover:opacity-100 italic">
@@ -28,16 +28,9 @@ const Footer = () => {
                     </p>
 
                     <div className="flex items-center gap-4 md:gap-6">
-                        {footer.email && (
-                             <a href={`mailto:${footer.email}`} className="w-10 md:w-12 h-10 md:h-12 border border-white/10 rounded-full flex items-center justify-center text-white/50 hover:bg-sale hover:text-white hover:border-sale hover:-translate-y-1 hover:shadow-2xl hover:shadow-sale/40 transition-all duration-300 backdrop-blur-sm group">
-                                <i className="fas fa-envelope text-lg md:text-xl transition-transform group-hover:scale-110" />
-                             </a>
-                        )}
-                        {!footer.email && (
-                             <a href="mailto:anjaraipettifoods@gmail.com" className="w-10 md:w-12 h-10 md:h-12 border border-white/10 rounded-full flex items-center justify-center text-white/50 hover:bg-sale hover:text-white hover:border-sale hover:-translate-y-1 hover:shadow-2xl hover:shadow-sale/40 transition-all duration-300 backdrop-blur-sm group">
-                                <i className="fas fa-envelope text-lg md:text-xl transition-transform group-hover:scale-110" />
-                             </a>
-                        )}
+                        <a href={footer.instagram_url || "https://www.instagram.com/"} target="_blank" rel="noopener noreferrer" className="w-10 md:w-12 h-10 md:h-12 border border-white/10 rounded-full flex items-center justify-center text-white/50 hover:bg-sale hover:text-white hover:border-sale hover:-translate-y-1 hover:shadow-2xl hover:shadow-sale/40 transition-all duration-300 backdrop-blur-sm group">
+                            <i className="fab fa-instagram text-lg md:text-xl transition-transform group-hover:scale-110" />
+                        </a>
                         {footer.facebook_url && (
                              <a href={footer.facebook_url} target="_blank" rel="noopener noreferrer" className="w-10 md:w-12 h-10 md:h-12 border border-white/10 rounded-full flex items-center justify-center text-white/50 hover:bg-green hover:text-white hover:border-green hover:-translate-y-1 hover:shadow-2xl hover:shadow-green/40 transition-all duration-300 backdrop-blur-sm group">
                                 <i className="fab fa-facebook text-lg md:text-xl transition-transform group-hover:scale-110" />

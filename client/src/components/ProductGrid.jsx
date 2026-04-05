@@ -7,7 +7,7 @@ const ProductGrid = ({ products = [], horizontal = false }) => {
             <div className="relative w-full">
                 <div className="flex overflow-x-auto gap-4 lg:gap-6 px-3 md:px-0 w-full max-w-[1400px] mx-auto pb-4 scrollbar-hide snap-x snap-mandatory">
                     {products.map((product) => (
-                        <div key={product.id} className="w-[calc(100vw-24px)] sm:w-[45vw] lg:w-[300px] xl:w-[320px] snap-center sm:snap-start flex-shrink-0">
+                        <div key={product.id} className="w-[calc(100vw-24px)] sm:w-[45vw] lg:w-[400px] xl:w-[480px] snap-center sm:snap-start flex-shrink-0">
                             <ProductCard product={product} />
                         </div>
                     ))}

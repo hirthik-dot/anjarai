@@ -22,7 +22,7 @@ const VideoSection = () => {
                             <span className="w-6 sm:w-8 h-px bg-warm" /> {t('Our Process')}
                         </span>
                         <h2 className="font-head text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] sm:leading-[1.15] mb-4 sm:mb-6 md:mb-8">
-                            {t('Watch How We Craft')} <br className="hidden sm:block" /> {t('The')} <span className="text-green underline underline-offset-[8px] sm:underline-offset-[12px] md:underline-offset-[16px] decoration-white/20">{t('Purest')}</span> {t('Baby Food')}
+                            {t('Watch How We Craft')} <br className="hidden sm:block" /> {t('The')} <span className="text-green underline underline-offset-[8px] sm:underline-offset-[12px] md:underline-offset-[16px] decoration-white/20">{t('Purest')}</span> {t('Masalas')}
                         </h2>
                         <p className="text-white/60 text-sm sm:text-base md:text-lg leading-[1.6] sm:leading-[1.8] font-medium pr-4 sm:pr-0">
                             {t('Transparency is at the heart of everything we do. See our preparation process, ingredients, and the love that goes into every batch.')}

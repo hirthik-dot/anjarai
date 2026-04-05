@@ -20,7 +20,7 @@ const Navbar = () => {
         () => [
             { label: 'Home', to: '/' },
             { label: 'Products', to: '/collections/all' },
-            { label: 'Collections', to: '/collections/all' },
+            { label: 'Collections', to: '/collections' },
             { label: 'About', to: '/about' },
         ],
         [],
