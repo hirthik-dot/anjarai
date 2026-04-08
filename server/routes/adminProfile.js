@@ -1,15 +1,17 @@
-const router  = require('express').Router();
+const router = require('express').Router();
 const AdminProfile = require('../models/AdminProfile');
+const FooterConfig = require('../models/FooterConfig');
 const OtpToken = require('../models/OtpToken');
 const protect = require('../middleware/auth');
 const { generateOTP, hashOTP, verifyOTP, otpExpiry } = require('../utils/otp');
 const { sendOtpEmail } = require('../utils/mailer');
+const { getIO } = require('../socket');
 
 // ── GET /api/admin-profile (protected) ───────────────────────────────────────
 router.get('/', protect, async (req, res) => {
   try {
     const profile = await AdminProfile.findOne({ admin_id: req.admin.id });
-    if (!profile) return res.json({ admin_id: req.admin.id, full_name: '', email: '', phone: '', email_verified: false, profile_complete: false });
+    if (!profile) return res.json({ admin_id: req.admin.id, full_name: '', email: '', phone: '', whatsapp_number: '', whatsapp_link: '', email_verified: false, profile_complete: false });
     res.json(profile);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -18,7 +20,7 @@ router.get('/', protect, async (req, res) => {
 
 // ── PUT /api/admin-profile (protected) ───────────────────────────────────────
 router.put('/', protect, async (req, res) => {
-  const { full_name, phone } = req.body;
+  const { full_name, phone, whatsapp_number } = req.body;
 
   if (!full_name || full_name.trim().length < 2)
     return res.status(400).json({ error: 'Full name is required (min 2 characters)' });
@@ -26,13 +28,35 @@ router.put('/', protect, async (req, res) => {
   if (!phone || !/^[6-9]\d{9}$/.test(phone.replace(/\s/g, '')))
     return res.status(400).json({ error: 'Valid 10-digit Indian phone number is required' });
 
+  // Optional WhatsApp: validate if provided
+  if (whatsapp_number && !/^\+?\d{10,15}$/.test(whatsapp_number.replace(/\s/g, ''))) {
+      return res.status(400).json({ error: 'Valid WhatsApp number is required (with country code, e.g. 919994617120)' });
+  }
+
+  const cleanWa = whatsapp_number ? whatsapp_number.replace(/\D/g, '') : '';
+  const fullWa = cleanWa ? (cleanWa.startsWith('91') ? cleanWa : '91' + cleanWa) : '';
+  const waLink = fullWa ? `https://wa.me/${fullWa}` : '';
+
   try {
     const profile = await AdminProfile.findOneAndUpdate(
       { admin_id: req.admin.id },
-      { full_name: full_name.trim(), phone: phone.trim(), updated_at: new Date() },
+      { full_name: full_name.trim(), phone: phone.trim(), whatsapp_number: fullWa, whatsapp_link: waLink, updated_at: new Date() },
       { upsert: true, new: true }
     );
-    res.json({ message: 'Profile updated', profile });
+
+    // SYNC with FooterConfig if requested
+    if (fullWa) {
+        let footer = await FooterConfig.findOne();
+        if (footer) {
+          footer.whatsapp_number = `+${fullWa}`; 
+          footer.whatsapp_link = waLink;
+          await footer.save();
+          // Emit socket event to notify client
+          getIO().emit('footer:updated', footer);
+        }
+    }
+
+    res.json({ message: 'Profile and website config updated', profile });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -101,6 +125,14 @@ router.post('/verify-email', protect, async (req, res) => {
       { email, email_verified: true, profile_complete: true, updated_at: new Date() },
       { upsert: true }
     );
+
+    // SYNC with FooterConfig
+    const footer = await FooterConfig.findOne();
+    if (footer) {
+      footer.email = email;
+      await footer.save();
+      getIO().emit('footer:updated', footer);
+    }
 
     record.used = true;
     await record.save();

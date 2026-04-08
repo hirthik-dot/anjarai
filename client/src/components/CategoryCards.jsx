@@ -12,7 +12,13 @@ const CategoryCards = () => {
 
     return (
         <section className="w-full bg-[var(--brand-surface)] border-y border-[rgba(165,214,167,0.35)]">
-            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-8 sm:py-10">
+                <div className="mb-8 md:mb-10 flex items-center justify-center gap-3">
+                    <span className="w-2.5 h-2.5 rounded-full bg-brand-primary animate-pulse" />
+                    <h2 className="text-xl md:text-2xl font-black text-brand-dark uppercase tracking-widest leading-none">
+                        Categories
+                    </h2>
+                </div>
                 <div className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide pb-2 md:flex-wrap md:justify-center md:overflow-x-visible">
                     {active.map((cat, i) => {
                         const catSlug = cat.slug || '';

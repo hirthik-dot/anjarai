@@ -3,6 +3,7 @@ const router = require('express').Router();
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Order = require('../models/Order');
+const User = require('../models/User');
 const Product = require('../models/Product');
 const Offer = require('../models/Offer');
 const protect = require('../middleware/auth');

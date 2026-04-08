@@ -21,13 +21,14 @@ const AboutStrip = () => {
 
                     {/* Left Column - Large Image */}
                     <div className="relative group animate-in slide-in-from-left duration-1000">
+                      <div className="relative overflow-hidden rounded-[2.5rem] border-[12px] border-white shadow-2xl shadow-brand-dark/10">
                         <img
                             src={about.image_url}
                             alt={about.title}
-                            className="rounded-2xl w-full h-[180px] sm:h-[220px] lg:h-[280px] object-cover shadow-lg"
+                            className="w-full h-[300px] sm:h-[400px] lg:h-[550px] object-cover transition-transform duration-700 group-hover:scale-105"
                         />
-
-
+                        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                      </div>
                     </div>
 
                     {/* Right Column - Content */}

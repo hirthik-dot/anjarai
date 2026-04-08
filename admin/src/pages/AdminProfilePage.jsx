@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { User, Mail, Phone, ShieldCheck, Save, Send, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
 export default function AdminProfilePage() {
-  const [profile, setProfile] = useState({ full_name: '', email: '', phone: '', email_verified: false });
+  const [profile, setProfile] = useState({ full_name: '', email: '', phone: '', whatsapp_number: '', email_verified: false });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [verifying, setVerifying] = useState(false);
@@ -15,7 +15,7 @@ export default function AdminProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get('/admin-profile');
+        const res = await api.get('/admin-profile');
         setProfile(res.data);
       } catch (err) {
         toast.error('Failed to load profile');
@@ -30,7 +30,11 @@ export default function AdminProfilePage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await axios.put('/admin-profile', { full_name: profile.full_name, phone: profile.phone });
+      await api.put('/admin-profile', { 
+        full_name: profile.full_name, 
+        phone: profile.phone,
+        whatsapp_number: profile.whatsapp_number 
+      });
       toast.success('Profile updated');
     } catch (err) {
       toast.error(err.response?.data?.error || 'Update failed');
@@ -43,7 +47,7 @@ export default function AdminProfilePage() {
     if (!profile.email) return toast.error('Please enter an email first');
     setVerifying(true);
     try {
-      const res = await axios.post('/admin-profile/request-email-verify', { email: profile.email });
+      const res = await api.post('/admin-profile/request-email-verify', { email: profile.email });
       toast.success(res.data.message);
       setOtpMode(true);
     } catch (err) {
@@ -55,7 +59,7 @@ export default function AdminProfilePage() {
 
   const handleVerifyOtp = async () => {
     try {
-      const res = await axios.post('/admin-profile/verify-email', { email: profile.email, otp });
+      const res = await api.post('/admin-profile/verify-email', { email: profile.email, otp });
       toast.success(res.data.message);
       setProfile({ ...profile, email_verified: true });
       setOtpMode(false);
@@ -107,6 +111,20 @@ export default function AdminProfilePage() {
                     className="w-full bg-brand-green/5 border-none rounded-2xl py-3 pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-brand-warm transition-all"
                   />
                 </div>
+              </div>
+              <div className="space-y-2 col-span-1 sm:col-span-2">
+                <label className="text-[10px] font-black text-brand-dark/40 uppercase tracking-widest px-1">WhatsApp Number (For Website Chat)</label>
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-dark/20 font-black text-xs">WA</div>
+                  <input 
+                    type="text" 
+                    value={profile.whatsapp_number || ''} 
+                    onChange={e => setProfile({...profile, whatsapp_number: e.target.value})}
+                    placeholder="919994617120"
+                    className="w-full bg-brand-green/5 border-none rounded-2xl py-3 pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-brand-warm transition-all"
+                  />
+                </div>
+                <p className="text-[9px] text-brand-dark/40 font-bold mt-1 ml-1 decoration-dotted underline underline-offset-2 tracking-tight opacity-60">Include country code without + or spaces (e.g. 91xxxxxxxxxx)</p>
               </div>
             </div>
 
