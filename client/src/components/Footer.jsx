@@ -10,7 +10,7 @@ const Footer = () => {
     const { t } = useLang();
 
     return (
-        <footer className="bg-dark pt-16 sm:pt-24 lg:pt-36 relative overflow-hidden text-white/70 select-none">
+        <footer className="pt-16 sm:pt-24 lg:pt-36 relative overflow-hidden text-white/70 select-none" style={{ backgroundColor: '#2a2a2e' }}>
             {/* Background Decorative Shapes */}
             <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-green/5 rounded-full blur-[150px] translate-x-1/2 -translate-y-1/2 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-warm/5 rounded-full blur-[120px] -translate-x-1/3 translate-y-1/3 pointer-events-none" />
@@ -41,6 +41,15 @@ const Footer = () => {
                                 <i className="fab fa-youtube text-lg md:text-xl transition-transform group-hover:scale-110" />
                              </a>
                         )}
+                    </div>
+
+                    {/* FSSAI Logo */}
+                    <div className="mt-6">
+                        <img
+                            src="/fssai_logo.png"
+                            alt="FSSAI Certified"
+                            className="h-10 md:h-12 w-auto brightness-125 contrast-125 saturate-150 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] drop-shadow-[0_0_2px_rgba(255,255,255,0.5)] hover:scale-110 transition-all duration-300 pointer-events-auto"
+                        />
                     </div>
                 </div>
 
@@ -102,13 +111,13 @@ const Footer = () => {
                         <span className="w-1.5 h-1.5 rounded-full bg-sale" /> {t('Contact Us')}
                     </h4>
                      <div className="space-y-6 md:space-y-10">
-                             <a href="https://wa.me/919994617120" className="flex items-center gap-5 group w-fit" target="_blank" rel="noopener noreferrer">
+                             <a href={footer.whatsapp_link || "https://wa.me/919994617120"} className="flex items-center gap-5 group w-fit" target="_blank" rel="noopener noreferrer">
                                 <div className="w-12 md:w-14 h-12 md:h-14 bg-green/10 rounded-2xl flex items-center justify-center text-green group-hover:bg-green group-hover:text-white transition-all duration-350 shadow-lg shadow-green/5">
                                     <i className="fab fa-whatsapp text-xl md:text-2xl" />
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-[11px] md:text-[12px] font-black text-white/30 tracking-[0.2em] mb-1">WhatsApp</span>
-                                    <span className="text-sm md:text-base font-black text-white group-hover:text-green transition-colors">+91 9994617120</span>
+                                    <span className="text-sm md:text-base font-black text-white group-hover:text-green transition-colors">{footer.whatsapp_number || '+91 9994617120'}</span>
                                 </div>
                              </a>
 

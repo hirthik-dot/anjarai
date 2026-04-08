@@ -5,6 +5,8 @@ const AdminProfileSchema = new mongoose.Schema({
   full_name:       { type: String, default: '' },
   email:           { type: String, unique: true, sparse: true },
   phone:           { type: String },
+  whatsapp_number: { type: String, default: '' },
+  whatsapp_link:   { type: String, default: '' },
   email_verified:  { type: Boolean, default: false },
   profile_complete: { type: Boolean, default: false },
   updated_at:      { type: Date, default: Date.now }

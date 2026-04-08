@@ -3,11 +3,11 @@ import SectionCard from '../components/SectionCard';
 import TagsInput from '../components/TagsInput';
 import api from '../utils/api';
 import { useToast } from '../components/Toast';
-import { Save, Sparkles, MapPin, Phone, Instagram, Facebook, Youtube, Github, Link as LinkIcon, Info } from 'lucide-react';
+import { Save, Sparkles, MapPin, Phone, Mail, Instagram, Facebook, Youtube, Github, Link as LinkIcon, Info } from 'lucide-react';
 
 export default function FooterPage() {
    const [form, setForm] = useState({
-      brand_description: '', whatsapp_number: '', whatsapp_link: '',
+      brand_description: '', whatsapp_number: '', whatsapp_link: '', email: '',
       instagram_handle: '', instagram_url: '', facebook_url: '', youtube_url: '', threads_url: '',
       location: '', quick_links: [], category_links: [], copyright: '',
       powered_by_text: '', powered_by_link: ''
@@ -19,7 +19,7 @@ export default function FooterPage() {
    useEffect(() => {
       api.get('/footer').then(res => {
          setForm(res.data || {
-            brand_description: '', whatsapp_number: '', whatsapp_link: '',
+            brand_description: '', whatsapp_number: '', whatsapp_link: '', email: '',
             instagram_handle: '', instagram_url: '', facebook_url: '', youtube_url: '', threads_url: '',
             location: '', quick_links: [], category_links: [], copyright: '',
             powered_by_text: '', powered_by_link: ''
@@ -76,7 +76,7 @@ export default function FooterPage() {
                         value={form.brand_description} onChange={(e) => setForm(f => ({ ...f, brand_description: e.target.value }))}
                         className={inputClass} rows="4" placeholder="Homemade baby food powders crafted with love..."
                      />
-                     <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="space-y-2">
                            <Label text="Display Location" />
                            <div className="relative">
@@ -85,13 +85,20 @@ export default function FooterPage() {
                            </div>
                         </div>
                         <div className="space-y-2">
-                           <Label text="WhatsApp Display Number" />
+                           <Label text="WhatsApp Number" />
                            <div className="relative">
                               <Phone className={iconClass} size={14} />
                               <input value={form.whatsapp_number} onChange={(e) => setForm(f => ({ ...f, whatsapp_number: e.target.value }))} placeholder="+91 8940497627" className={inputClass + " pl-10"} />
                            </div>
                         </div>
-                     </div>
+                        <div className="space-y-2">
+                           <Label text="Display Email" />
+                           <div className="relative">
+                              <Mail className={iconClass} size={14} />
+                              <input value={form.email} onChange={(e) => setForm(f => ({ ...f, email: e.target.value }))} placeholder="contact@example.com" className={inputClass + " pl-10"} />
+                           </div>
+                        </div>
+                      </div>
                   </div>
                </Section>
 

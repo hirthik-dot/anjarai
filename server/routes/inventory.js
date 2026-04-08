@@ -1,6 +1,7 @@
-const router  = require('express').Router();
+const router = require('express').Router();
 const Inventory = require('../models/Inventory');
 const InventoryTransaction = require('../models/InventoryTransaction');
+const Product = require('../models/Product');
 const protect = require('../middleware/auth');
 const { syncProductTypeFromInventory } = require('../utils/productStock');
 const { getIO } = require('../socket');

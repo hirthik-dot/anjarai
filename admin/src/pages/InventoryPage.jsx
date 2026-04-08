@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
   Package, AlertTriangle, XCircle, CheckCircle2, 
   ArrowUpRight, ArrowDownRight, RefreshCcw, Search, Filter, 
-  Plus, History as HistoryIcon, Settings
+  Plus, History as HistoryIcon, Settings, ClipboardList
 } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
 export default function InventoryPage() {
+  const navigate = useNavigate();
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -80,6 +82,13 @@ export default function InventoryPage() {
         
         <div className="flex items-center gap-3">
           <button 
+             onClick={() => navigate('/inventory-reports')}
+             className="flex items-center gap-2 bg-brand-green text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-brand-green/20"
+          >
+            <ClipboardList size={18} />
+            View Reports
+          </button>
+          <button 
             onClick={fetchInventory}
             className="p-3 bg-white border border-brand-green/10 rounded-2xl text-brand-green hover:bg-brand-green/5 transition-colors shadow-sm"
           >
@@ -139,8 +148,12 @@ export default function InventoryPage() {
                 <tr key={item._id} className="hover:bg-brand-green/[0.01] transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-brand-green/5 overflow-hidden flex-shrink-0 border border-brand-green/5">
-                        <img src={item.product_id?.images?.[0]} alt="" className="w-full h-full object-cover" />
+                      <div className="w-12 h-12 rounded-xl bg-brand-green/5 overflow-hidden flex-shrink-0 border border-brand-green/5 flex items-center justify-center">
+                        {item.product_id?.images?.[0] ? (
+                          <img src={item.product_id.images[0]} alt={item.product_id.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <Package size={20} className="text-brand-green/30" />
+                        )}
                       </div>
                       <div>
                         <p className="font-bold text-brand-dark text-sm">{item.product_id?.name || 'Unknown Product'}</p>

@@ -39,29 +39,7 @@ const products = [
     benefits: ['High protein content', 'Brain development support', 'Natural milk enhancer', 'No artificial flavors'],
     ingredients: 'Almond, Badam, Cashew, Green Gram, Dates',
     how_to_use: 'Mix 2 tsp in warm milk. Stir well and serve.', fssai: true
-  },
-  // Adding placeholders for other products to reach 27
-  ...Array.from({ length: 25 }, (_, i) => ({
-    id: `p${i + 3}`,
-    slug: `product-${i + 3}`,
-    name: `Homemade Powder Product ${i + 3}`,
-    price: 300 + (i * 10),
-    original_price: 600 + (i * 20),
-    images: [`https://www.themotherscare.com/cdn/shop/files/ProductPlaceholder.png`],
-    sale: true,
-    rating: 5,
-    reviews: Math.floor(Math.random() * 50),
-    collections: ['all'],
-    variants: ['200g'],
-    type: 'buy',
-    description: 'This is a nutrient-rich organic product for your baby.',
-    benefits: ['100% Organic', 'No preservatives'],
-    ingredients: 'Natural grains and nuts',
-    how_to_use: 'Mix with warm water.',
-    fssai: true,
-    is_active: true,
-    sort_order: i + 3
-  }))
+  }
 ];
 
 const bcrypt = require('bcrypt');

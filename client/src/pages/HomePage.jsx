@@ -180,23 +180,6 @@ const HomePage = () => {
                 {isInitialLoad ? <SkeletonGrid count={8} horizontal={true} /> : allProducts.length > 0 ? <ProductGrid products={allProducts} horizontal={true} /> : null}
             </section>
 
-            {/* FSSAI License Banner */}
-            <section className="bg-light/50 py-6 md:py-10 border-t border-[rgba(0,0,0,0.03)]">
-                <div className="max-w-[1400px] w-full mx-auto px-6 text-center flex flex-col items-center">
-                    <h2 className="font-head text-xl md:text-3xl font-black text-dark mb-4 tracking-wide">
-                        CERTIFIED & <span className="text-green italic">TRUSTED</span>
-                    </h2>
-                    <p className="text-mid max-w-[500px] mb-6 text-sm opacity-80">
-                        {t('We adhere to the highest standards of food safety and quality. Your health and trust are our top priorities.')}
-                    </p>
-                    <img 
-                        src="/fssai.jpeg" 
-                        alt="FSSAI License" 
-                        loading="lazy"
-                        className="rounded-xl md:rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] w-full max-w-[90%] md:max-w-[800px] object-contain border border-[rgba(0,0,0,0.04)] hover:scale-[1.01] transition-transform duration-500" 
-                    />
-                </div>
-            </section>
 
             <ClosingBanner />
             <VideoSection />
