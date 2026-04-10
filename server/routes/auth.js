@@ -10,34 +10,34 @@ const { sendOtpEmail } = require('../utils/mailer');
 
 const SECRET  = process.env.JWT_SECRET || 'tmc_jwt_secret_change_in_prod';
 
-// POST /api/auth/login  (email + password)
+// POST /api/auth/login  (username + password)
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password)
-    return res.status(400).json({ error: 'Email and password are required' });
+  const { username, password } = req.body;
+  if (!username || !password)
+    return res.status(400).json({ error: 'Full Name and password are required' });
 
   try {
-    const cleanEmail = email.trim().toLowerCase();
+    const cleanUsername = username.trim();
 
-    // Find admin via their profile email
-    const profile = await AdminProfile.findOne({ email: { $regex: new RegExp(`^${cleanEmail}$`, 'i') } });
-    if (!profile) return res.status(401).json({ error: 'Invalid email or password' });
-
-    const admin = await Admin.findById(profile.admin_id);
-    if (!admin) return res.status(401).json({ error: 'Invalid email or password' });
+    // Find admin by username (case-insensitive)
+    const admin = await Admin.findOne({ username: { $regex: new RegExp(`^${cleanUsername}$`, 'i') } });
+    if (!admin) return res.status(401).json({ error: 'Invalid Full Name or password' });
 
     const valid = bcrypt.compareSync(password, admin.password_hash);
-    if (!valid) return res.status(401).json({ error: 'Invalid email or password' });
+    if (!valid) return res.status(401).json({ error: 'Invalid Full Name or password' });
+
+    // Load profile
+    const profile = await AdminProfile.findOne({ admin_id: admin._id });
 
     const token = jwt.sign(
-      { id: admin._id, username: cleanEmail },
+      { id: admin._id, username: admin.username },
       SECRET,
       { expiresIn: '8h' }
     );
 
     res.json({ 
       token, 
-      username: cleanEmail,
+      username: admin.username,
       profileComplete: profile?.profile_complete === true,
       emailVerified:   profile?.email_verified === true,
       expiresIn:       '8h' 
@@ -99,36 +99,37 @@ router.post('/request-password-otp', protect, async (req, res) => {
 
 // RESET PASSWORD ROUTE (FORGOT PASSWORD)
 router.post('/forgot-password-otp', async (req, res) => {
-  const { email } = req.body;
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-    return res.status(400).json({ error: 'Valid email address is required' });
+  const { fullName } = req.body;
+  if (!fullName)
+    return res.status(400).json({ error: 'Full Name is required' });
 
-  const cleanEmail = email.trim().toLowerCase();
+  const cleanName = fullName.trim();
 
   try {
-    // Find admin by email in AdminProfile (case-insensitive search)
-    const profile = await AdminProfile.findOne({ email: { $regex: new RegExp(`^${cleanEmail}$`, 'i') } });
-    if (!profile) return res.status(404).json({ error: 'No account found with this email' });
+    // Find admin by full_name in AdminProfile (case-insensitive search)
+    const profile = await AdminProfile.findOne({ full_name: { $regex: new RegExp(`^${cleanName}$`, 'i') } });
+    if (!profile || !profile.email) return res.status(404).json({ error: 'No account found with this name or no email registered' });
 
+    const email   = profile.email;
     const code    = generateOTP();
     const hashed  = hashOTP(code);
     const expires = otpExpiry();
 
-    // Invalidate old OTPs (using cleanEmail)
-    await OtpToken.updateMany({ target: cleanEmail, purpose: 'forgot_password' }, { used: true });
+    // Invalidate old OTPs (using email)
+    await OtpToken.updateMany({ target: email, purpose: 'forgot_password' }, { used: true });
 
-    // Save new OTP (store cleanEmail as target)
+    // Save new OTP
     await OtpToken.create({
-      target: cleanEmail,
+      target: email,
       code: hashed,
       purpose: 'forgot_password',
       admin_id: profile.admin_id,
       expires_at: expires
     });
 
-    await sendOtpEmail(cleanEmail, profile.full_name || 'Admin', code);
+    await sendOtpEmail(email, profile.full_name || 'Admin', code);
     
-    const masked = cleanEmail.replace(/(.{1,2})(.*)(@.*)/, (_, a, b, c) => a + '*'.repeat(b.length) + c);
+    const masked = email.replace(/(.{1,2})(.*)(@.*)/, (_, a, b, c) => a + '*'.repeat(b.length) + c);
     res.json({ message: `Reset OTP sent to ${masked}` });
   } catch (err) {
     console.error('forgot-password-otp error:', err.message);
