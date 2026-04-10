@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { Lock, Mail, Key, ShieldAlert, Send, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
@@ -13,10 +13,10 @@ export default function ChangePasswordPage() {
   const handleRequestOtp = async () => {
     setLoading(true);
     try {
-      const res = await axios.post('/auth/request-password-otp');
+      const res = await api.post('/auth/request-password-otp');
       setMessage(res.data.message);
       setStep(2);
-      toast.success('OTP sent to your verified email');
+      toast.success('OTP sent to your admin email');
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to send OTP');
     } finally {
@@ -32,7 +32,7 @@ export default function ChangePasswordPage() {
 
     setLoading(true);
     try {
-      const res = await axios.post('/auth/verify-password-otp', formData);
+      const res = await api.post('/auth/verify-password-otp', formData);
       toast.success(res.data.message);
       setStep(3); // success state
     } catch (err) {

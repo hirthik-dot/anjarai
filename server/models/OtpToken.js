@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const OtpTokenSchema = new mongoose.Schema({
   target:      { type: String, required: true },  // email address
   code:        { type: String, required: true },  // hashed code
-  purpose:     { type: String, enum: ['password_change', 'email_verify', 'client_verify'], required: true },
+  purpose:     { type: String, enum: ['password_change', 'email_verify', 'client_verify', 'forgot_password'], required: true },
   admin_id:    { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
   client_id:   { type: mongoose.Schema.Types.ObjectId, ref: 'ClientUser' },
   attempts:    { type: Number, default: 0 },

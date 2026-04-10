@@ -20,10 +20,13 @@ router.get('/', protect, async (req, res) => {
 
 // ── PUT /api/admin-profile (protected) ───────────────────────────────────────
 router.put('/', protect, async (req, res) => {
-  const { full_name, phone, whatsapp_number } = req.body;
+  const { full_name, email, phone, whatsapp_number } = req.body;
 
   if (!full_name || full_name.trim().length < 2)
     return res.status(400).json({ error: 'Full name is required (min 2 characters)' });
+
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return res.status(400).json({ error: 'Valid email address is required' });
 
   if (!phone || !/^[6-9]\d{9}$/.test(phone.replace(/\s/g, '')))
     return res.status(400).json({ error: 'Valid 10-digit Indian phone number is required' });
@@ -40,24 +43,40 @@ router.put('/', protect, async (req, res) => {
   try {
     const profile = await AdminProfile.findOneAndUpdate(
       { admin_id: req.admin.id },
-      { full_name: full_name.trim(), phone: phone.trim(), whatsapp_number: fullWa, whatsapp_link: waLink, updated_at: new Date() },
+      { 
+        full_name: full_name.trim(), 
+        email: email?.trim(),
+        phone: phone.trim(), 
+        whatsapp_number: fullWa, 
+        whatsapp_link: waLink, 
+        email_verified: true, // Auto-verify on update as requested to remove UI
+        updated_at: new Date() 
+      },
       { upsert: true, new: true }
     );
 
-    // SYNC with FooterConfig if requested
-    if (fullWa) {
-        let footer = await FooterConfig.findOne();
-        if (footer) {
-          footer.whatsapp_number = `+${fullWa}`; 
-          footer.whatsapp_link = waLink;
-          await footer.save();
-          // Emit socket event to notify client
-          getIO().emit('footer:updated', footer);
-        }
+    // Sync with Admin model (username)
+    if (email) {
+      await require('../models/Admin').findByIdAndUpdate(req.admin.id, { username: email.trim() });
+    }
+
+    // SYNC with FooterConfig
+    let footer = await FooterConfig.findOne();
+    if (footer) {
+      if (fullWa) {
+        footer.whatsapp_number = `+${fullWa}`; 
+        footer.whatsapp_link = waLink;
+      }
+      if (email) {
+        footer.email = email.trim();
+      }
+      await footer.save();
+      getIO().emit('footer:updated', footer);
     }
 
     res.json({ message: 'Profile and website config updated', profile });
   } catch (err) {
+    if (err.code === 11000) return res.status(400).json({ error: 'Email already in use by another account' });
     res.status(500).json({ error: err.message });
   }
 });
