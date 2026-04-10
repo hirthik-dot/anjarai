@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdmin, API_BASE } from '../context/AdminContext';
-import { Eye, EyeOff, Lock, User, Terminal, CheckCircle2, Award, Box, Leaf } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, Terminal, CheckCircle2, Award, Box } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const { admin, login } = useAdmin();
   const navigate = useNavigate();
-  const [form,     setForm]     = useState({ username: '', password: '' });
+  const [form,     setForm]     = useState({ email: '', password: '' });
   const [error,    setError]    = useState('');
   const [loading,  setLoading]  = useState(false);
   const [showPass, setShowPass] = useState(false);
 
   // Forgot Password States
   const [mode, setMode] = useState('login'); // login | forgot | reset
-  const [resetData, setResetData] = useState({ email: '', otp: '', newUsername: '', newPassword: '', confirmPassword: '' });
+  const [resetData, setResetData] = useState({ email: '', otp: '', newPassword: '', confirmPassword: '' });
   const [resetMsg, setResetMsg] = useState('');
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function AdminLoginPage() {
       const res = await fetch(`${API_BASE}/auth/login`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(form)
+        body:    JSON.stringify({ email: form.email.trim().toLowerCase(), password: form.password })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Login failed');
@@ -80,9 +80,9 @@ export default function AdminLoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Reset failed');
-      alert('Password reset successful! Please login with your new credentials.');
+      alert('Password reset successful! Please login with your new email and new password.');
       setMode('login');
-      setForm({ username: resetData.newUsername || resetData.email, password: '' });
+      setForm({ email: resetData.email, password: '' });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -164,11 +164,11 @@ export default function AdminLoginPage() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-brand-mid/70 ml-2">
-                    <User size={12} /> Username
+                    <Mail size={12} /> Email Address
                   </label>
                   <input
-                    name="username" type="text" value={form.username}
-                    onChange={handleChange} placeholder="e.g. admin" required
+                    name="email" type="email" value={form.email}
+                    onChange={handleChange} placeholder="your@email.com" required
                     className="w-full bg-brand-light/20 border-2 border-brand-green-pale rounded-2xl px-5 py-4 text-sm font-bold font-body outline-none focus:border-brand-green focus:bg-white transition-all"
                   />
                 </div>
@@ -250,23 +250,13 @@ export default function AdminLoginPage() {
               </div>
 
               <form onSubmit={handleFinalReset} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-brand-mid/70 ml-2">OTP Code</label>
-                    <input
-                      name="otp" type="text" value={resetData.otp}
-                      onChange={handleResetChange} required
-                      className="w-full bg-brand-light/20 border rounded-xl px-4 py-3 text-sm font-bold outline-none border-brand-green/20"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-brand-mid/70 ml-2">New Username</label>
-                    <input
-                      name="newUsername" type="text" value={resetData.newUsername}
-                      onChange={handleResetChange} placeholder="Optional"
-                      className="w-full bg-brand-light/20 border rounded-xl px-4 py-3 text-sm font-bold outline-none border-brand-green/20"
-                    />
-                  </div>
+                <div className="space-y-1">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-brand-mid/70 ml-2">OTP Code (6 digits)</label>
+                  <input
+                    name="otp" type="text" value={resetData.otp}
+                    onChange={handleResetChange} required maxLength={6}
+                    className="w-full bg-brand-light/20 border-2 border-brand-green/20 rounded-xl px-4 py-3 text-center text-xl font-black tracking-[10px] outline-none focus:border-brand-green"
+                  />
                 </div>
 
                 <div className="space-y-1">

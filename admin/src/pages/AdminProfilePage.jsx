@@ -51,7 +51,7 @@ export default function AdminProfilePage() {
         </div>
         <div>
           <h1 className="text-3xl font-head font-black text-brand-dark">Admin <span className="text-brand-green">Profile</span></h1>
-          <p className="text-brand-dark/50 font-bold uppercase tracking-widest text-[10px]">Manage your administrative identity</p>
+          <p className="text-brand-dark/50 font-bold uppercase tracking-widest text-[10px]">Manage your admin identity & login credentials</p>
         </div>
       </div>
 
@@ -78,7 +78,7 @@ export default function AdminProfilePage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-brand-dark/40 uppercase tracking-widest px-1">Login Email / Admin Email</label>
+                <label className="text-[10px] font-black text-brand-dark/40 uppercase tracking-widest px-1">Admin Email <span className="text-brand-green">(Login Credential)</span></label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-dark/20" size={18} />
                   <input 
@@ -88,7 +88,7 @@ export default function AdminProfilePage() {
                     className="w-full bg-brand-green/5 border-none rounded-2xl py-4 pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-brand-warm transition-all outline-none"
                   />
                 </div>
-                <p className="text-[9px] text-brand-sale font-black uppercase tracking-tighter ml-1 italic opacity-70">Updating this will change your login email & website contact info</p>
+                <p className="text-[9px] text-brand-dark/40 font-bold ml-1 italic opacity-60">This email is used to log in to the admin panel</p>
               </div>
 
               <div className="space-y-2">

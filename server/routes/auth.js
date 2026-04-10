@@ -10,31 +10,34 @@ const { sendOtpEmail } = require('../utils/mailer');
 
 const SECRET  = process.env.JWT_SECRET || 'tmc_jwt_secret_change_in_prod';
 
-// POST /api/auth/login
+// POST /api/auth/login  (email + password)
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password)
-    return res.status(400).json({ error: 'Username and password are required' });
+  const { email, password } = req.body;
+  if (!email || !password)
+    return res.status(400).json({ error: 'Email and password are required' });
 
   try {
-    const admin = await Admin.findOne({ username });
-    if (!admin) return res.status(401).json({ error: 'Invalid username or password' });
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Find admin via their profile email
+    const profile = await AdminProfile.findOne({ email: { $regex: new RegExp(`^${cleanEmail}$`, 'i') } });
+    if (!profile) return res.status(401).json({ error: 'Invalid email or password' });
+
+    const admin = await Admin.findById(profile.admin_id);
+    if (!admin) return res.status(401).json({ error: 'Invalid email or password' });
 
     const valid = bcrypt.compareSync(password, admin.password_hash);
-    if (!valid) return res.status(401).json({ error: 'Invalid username or password' });
-
-    // Load profile
-    const profile = await AdminProfile.findOne({ admin_id: admin._id });
+    if (!valid) return res.status(401).json({ error: 'Invalid email or password' });
 
     const token = jwt.sign(
-      { id: admin._id, username: admin.username },
+      { id: admin._id, username: cleanEmail },
       SECRET,
       { expiresIn: '8h' }
     );
 
     res.json({ 
       token, 
-      username: admin.username, 
+      username: cleanEmail,
       profileComplete: profile?.profile_complete === true,
       emailVerified:   profile?.email_verified === true,
       expiresIn:       '8h' 
