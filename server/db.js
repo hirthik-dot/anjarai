@@ -6,10 +6,10 @@ const connectDB = async () => {
     const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/themotherscare');
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     
-    // Seed Admin if not exists
+    // Seed Admin ONLY if no admin account exists at all
     const Admin = require('./models/Admin');
-    const adminExists = await Admin.findOne({ username: 'admin' });
-    if (!adminExists) {
+    const adminCount = await Admin.countDocuments();
+    if (adminCount === 0) {
       const hash = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'admin123', 10);
       await Admin.create({ username: 'admin', password_hash: hash });
       console.log('✅ Default Admin seeded — username: admin | password: admin123');

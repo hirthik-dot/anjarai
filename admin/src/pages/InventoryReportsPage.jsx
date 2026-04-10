@@ -15,6 +15,8 @@ export default function InventoryReportsPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('inventory'); // inventory, sales, shipping
   const [activeSubReport, setActiveSubReport] = useState('summary'); 
+  const [dateFilter, setDateFilter] = useState('all'); // all, month, today, custom
+  const [customDate, setCustomDate] = useState(new Date().toISOString().split('T')[0]);
   const toast = useToast();
 
   useEffect(() => {
@@ -38,6 +40,31 @@ export default function InventoryReportsPage() {
     fetchData();
   }, []);
 
+  // --- FILTERING LOGIC ---
+  const getFilteredData = (data, dateKey) => {
+    if (dateFilter === 'all') return data;
+    const now = new Date();
+    const today = new Date().toDateString();
+
+    return data.filter(item => {
+      const itemDate = new Date(item[dateKey]);
+      if (dateFilter === 'today') return itemDate.toDateString() === today;
+      if (dateFilter === 'month') {
+        const lastMonth = new Date();
+        lastMonth.setMonth(now.getMonth() - 1);
+        return itemDate >= lastMonth;
+      }
+      if (dateFilter === 'custom') {
+        const selected = new Date(customDate).toDateString();
+        return itemDate.toDateString() === selected;
+      }
+      return true;
+    });
+  };
+
+  const filteredOrders = getFilteredData(orders, 'createdAt');
+  const filteredHistory = getFilteredData(history, 'created_at');
+
   // --- CALCULATIONS ---
   const invStats = {
     totalUnits: inventory.reduce((acc, curr) => acc + (curr.quantity || 0), 0),
@@ -47,17 +74,17 @@ export default function InventoryReportsPage() {
   };
 
   const salesStats = {
-    totalRevenue: orders.filter(o => o.payment_status === 'PAID').reduce((acc, o) => acc + o.total_amount, 0),
-    totalOrders: orders.length,
-    pendingPayments: orders.filter(o => o.payment_status === 'PENDING').length,
-    avgOrderValue: orders.length ? (orders.reduce((acc, o) => acc + o.total_amount, 0) / orders.length) : 0
+    totalRevenue: filteredOrders.filter(o => o.payment_status === 'PAID').reduce((acc, o) => acc + o.total_amount, 0),
+    totalOrders: filteredOrders.length,
+    pendingPayments: filteredOrders.filter(o => o.payment_status === 'PENDING').length,
+    avgOrderValue: filteredOrders.length ? (filteredOrders.reduce((acc, o) => acc + o.total_amount, 0) / filteredOrders.length) : 0
   };
 
   const shippingStats = {
-    processing: orders.filter(o => o.order_status === 'PROCESSING').length,
-    shipped: orders.filter(o => o.order_status === 'SHIPPED').length,
-    delivered: orders.filter(o => o.order_status === 'DELIVERED').length,
-    cancelled: orders.filter(o => o.order_status === 'CANCELLED').length
+    processing: filteredOrders.filter(o => o.order_status === 'PROCESSING').length,
+    shipped: filteredOrders.filter(o => o.order_status === 'SHIPPED').length,
+    delivered: filteredOrders.filter(o => o.order_status === 'DELIVERED').length,
+    cancelled: filteredOrders.filter(o => o.order_status === 'CANCELLED').length
   };
 
   // --- EXPORTERS ---
@@ -72,7 +99,8 @@ export default function InventoryReportsPage() {
     const csvContent = "data:text/csv;charset=utf-8," + headers + "\n" + rows;
     const link = document.createElement("a");
     link.setAttribute("href", encodeURI(csvContent));
-    link.setAttribute("download", `${filename}_${new Date().toLocaleDateString()}.csv`);
+    const finalName = dateFilter === 'all' ? filename : `${filename}_${dateFilter}_${customDate}`;
+    link.setAttribute("download", `${finalName}_${new Date().toLocaleDateString()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -86,11 +114,26 @@ export default function InventoryReportsPage() {
       'Reorder Level': item.reorder_level,
       'Status': item.quantity === 0 ? 'Out of Stock' : (item.quantity <= item.reorder_level ? 'Low' : 'Healthy')
     }));
-    exportToCSV(data, 'Inventory_Full_Report');
+    exportToCSV(data, 'Inventory_Full_Snapshot');
   };
 
+  const handleDownloadMovementLogs = () => {
+    const data = filteredHistory.map(h => ({
+      'Date': new Date(h.created_at).toLocaleString(),
+      'Product': h.product_id?.name || 'Unknown',
+      'Variant': h.variant,
+      'Type': h.transaction_type,
+      'Change': h.quantity_change,
+      'Before': h.quantity_before,
+      'After': h.quantity_after,
+      'By': h.performed_by,
+      'Notes': h.notes || ''
+    }));
+    exportToCSV(data, 'Inventory_Movement_Report');
+  }
+
   const handleDownloadIncome = () => {
-    const data = orders.map(o => ({
+    const data = filteredOrders.map(o => ({
       'Order ID': o._id,
       'Date': new Date(o.createdAt).toLocaleString(),
       'Customer': o.user?.name || 'Guest',
@@ -106,7 +149,7 @@ export default function InventoryReportsPage() {
 
   const handleDownloadDetailedOrders = () => {
     const data = [];
-    orders.forEach(o => {
+    filteredOrders.forEach(o => {
       o.items.forEach(item => {
         data.push({
           'Order ID': o._id,
@@ -126,7 +169,7 @@ export default function InventoryReportsPage() {
   };
 
   const handleDownloadShippingList = () => {
-    const data = orders.map(o => ({
+    const data = filteredOrders.map(o => ({
       'Order ID': o._id,
       'Date': new Date(o.createdAt).toLocaleDateString(),
       'Status': o.order_status,
@@ -140,7 +183,7 @@ export default function InventoryReportsPage() {
   if (loading) return <div className="p-20 text-center font-bold text-brand-dark/30 italic px-4">Generating Advanced Reports...</div>;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="space-y-8 animate-in fade-in duration-700 pb-20">
       {/* Page Title & Main Tabs */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
         <div>
@@ -158,10 +201,34 @@ export default function InventoryReportsPage() {
         </div>
       </div>
 
+      {/* --- FILTER BAR --- */}
+      <div className="flex flex-wrap gap-4 items-center bg-white p-6 rounded-[32px] border border-brand-green/5 shadow-sm">
+        <div className="flex items-center gap-2 text-brand-dark font-black uppercase tracking-widest text-[10px] bg-brand-light/50 px-4 py-2 rounded-xl">
+           <Filter size={14} className="text-brand-green" /> Filter Reports:
+        </div>
+        <div className="flex bg-brand-light/20 p-1 rounded-2xl border border-brand-green/5">
+           <FilterBtn active={dateFilter === 'all'} label="All History" onClick={() => setDateFilter('all')} />
+           <FilterBtn active={dateFilter === 'month'} label="Past Month" onClick={() => setDateFilter('month')} />
+           <FilterBtn active={dateFilter === 'today'} label="Today" onClick={() => setDateFilter('today')} />
+           <FilterBtn active={dateFilter === 'custom'} label="Specific Day" onClick={() => setDateFilter('custom')} />
+        </div>
+        {dateFilter === 'custom' && (
+          <div className="flex items-center gap-3 animate-in slide-in-from-left-4 duration-300">
+             <Calendar size={16} className="text-brand-green" />
+             <input 
+               type="date" 
+               value={customDate} 
+               onChange={(e) => setCustomDate(e.target.value)}
+               className="bg-brand-light/50 border-none rounded-2xl px-5 py-2 text-sm font-bold text-brand-dark outline-none focus:ring-2 ring-brand-green/20"
+             />
+          </div>
+        )}
+      </div>
+
       {/* --- INVENTORY TAB --- */}
       {activeTab === 'inventory' && (
-        <div className="space-y-8">
-           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <SummaryCard label="Total Units" value={invStats.totalUnits} icon={Package} color="blue" />
               <SummaryCard label="Healthy SKUs" value={invStats.totalSKUs - invStats.lowStock - invStats.outOfStock} icon={CheckCircle2} color="green" />
               <SummaryCard label="Low Stock" value={invStats.lowStock} icon={AlertTriangle} color="orange" />
@@ -170,7 +237,8 @@ export default function InventoryReportsPage() {
            <ReportSection 
               title="Inventory Reports" 
               actions={[
-                { title: 'Full Stock Snapshot', desc: 'Current units for all products', onDownload: handleDownloadFullInventory },
+                { title: 'Full Stock Snapshot', desc: 'Current units for all products (Live)', onDownload: handleDownloadFullInventory },
+                { title: 'Inventory Movement Logs', desc: 'Stock In/Out activity for the selected period', onDownload: handleDownloadMovementLogs },
                 { title: 'Restock Action List', desc: 'Items currently under reorder level', onDownload: () => {
                     const data = inventory.filter(i => i.quantity <= i.reorder_level).map(i => ({ Product: i.product_id?.name, Variant: i.variant, Stock: i.quantity, Reorder: i.reorder_level }));
                     exportToCSV(data, 'Low_Stock_Action_List');
@@ -184,9 +252,9 @@ export default function InventoryReportsPage() {
       {activeTab === 'sales' && (
         <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <SummaryCard label="Total Revenue" value={`₹${salesStats.totalRevenue.toLocaleString()}`} icon={IndianRupee} color="green" />
+              <SummaryCard label="Total Revenue" value={`\u20b9${salesStats.totalRevenue.toLocaleString()}`} icon={IndianRupee} color="green" />
               <SummaryCard label="Orders Count" value={salesStats.totalOrders} icon={ShoppingBag} color="blue" />
-              <SummaryCard label="Avg Order Value" value={`₹${Math.round(salesStats.avgOrderValue)}`} icon={BarChart3} color="orange" />
+              <SummaryCard label="Avg Order Value" value={`\u20b9${Math.round(salesStats.avgOrderValue)}`} icon={BarChart3} color="orange" />
               <SummaryCard label="Unpaid Orders" value={salesStats.pendingPayments} icon={XCircle} color="red" />
            </div>
            
@@ -195,33 +263,36 @@ export default function InventoryReportsPage() {
                 title="Financial Reports" 
                 icon={<BarChart3 size={20} />}
                 items={[
-                  { title: 'Complete Income Report', desc: 'Financial breakdown of all orders & statuses', onDownload: handleDownloadIncome },
-                  { title: 'Itemized Sales Analysis', desc: 'Detailed view of every product sold (Complete Data)', onDownload: handleDownloadDetailedOrders },
-                  { title: 'Revenue by Product', desc: 'Summary of earnings per product SKU', onDownload: () => {
+                  { title: 'Complete Income Report', desc: 'Financial breakdown of orders in selected period', onDownload: handleDownloadIncome },
+                  { title: 'Itemized Sales Analysis', desc: 'Every product sold during this timeframe', onDownload: handleDownloadDetailedOrders },
+                  { title: 'Revenue by Product', desc: 'Summary of earnings per product SKU (Filtered)', onDownload: () => {
                       const revenues = {};
-                      orders.filter(o => o.payment_status === 'PAID').forEach(o => {
+                      filteredOrders.filter(o => o.payment_status === 'PAID').forEach(o => {
                         o.items.forEach(it => {
                           const key = `${it.name} (${it.variant})`;
                           revenues[key] = (revenues[key] || 0) + (it.price * it.qty);
                         });
                       });
-                      const data = Object.keys(revenues).map(k => ({ 'Product (Variant)': k, 'Total Earnings': `₹${revenues[k]}` }));
+                      const data = Object.keys(revenues).map(k => ({ 'Product (Variant)': k, 'Total Earnings': `\u20b9${revenues[k]}` }));
                       exportToCSV(data, 'Revenue_by_Product_Summary');
                   }}
                 ]}
               />
 
               <div className="bg-white rounded-[40px] p-8 border border-brand-green/5 shadow-sm">
-                 <h3 className="font-head text-xl font-black mb-6">Recent Sales Activity</h3>
+                 <h3 className="font-head text-xl font-black mb-6 flex items-center gap-2">
+                    <TrendingUp className="text-brand-green" size={20} /> Latest Activity ({dateFilter})
+                 </h3>
                  <div className="space-y-4">
-                    {orders.slice(0, 5).map((o, i) => (
-                      <div key={i} className="flex justify-between items-center p-4 bg-brand-light/30 rounded-2xl">
+                    {filteredOrders.length === 0 && <div className="p-8 text-center text-brand-dark/20 font-black italic uppercase text-xs">No records found for this period</div>}
+                    {filteredOrders.slice(0, 5).map((o, i) => (
+                      <div key={i} className="flex justify-between items-center p-4 bg-brand-light/30 rounded-2xl hover:bg-brand-light/50 transition-colors">
                          <div>
                             <p className="text-sm font-bold">{o.user?.name || 'Guest User'}</p>
                             <p className="text-[10px] font-black text-brand-dark/30 uppercase">{new Date(o.createdAt).toLocaleDateString()}</p>
                          </div>
                          <div className="text-right">
-                            <p className="text-sm font-black text-brand-green">₹{o.total_amount}</p>
+                            <p className="text-sm font-black text-brand-green">\u20b9{o.total_amount}</p>
                             <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${o.payment_status === 'PAID' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}>{o.payment_status}</span>
                          </div>
                       </div>
@@ -245,13 +316,13 @@ export default function InventoryReportsPage() {
            <ReportSection 
               title="Shipping & Fulfillment" 
               actions={[
-                { title: 'Shipping Manifest', desc: 'Full list of recipient addresses and phone numbers', onDownload: handleDownloadShippingList },
-                { title: 'Pending Fulfilment Report', desc: 'Orders strictly in PROCESSING state', onDownload: () => {
-                    const data = orders.filter(o => o.order_status === 'PROCESSING').map(o => ({ 'Order ID': o._id, 'Name': o.shipping_address?.name, 'City': o.shipping_address?.city, 'Items': o.items.map(it => `${it.qty}x ${it.name}`).join(' | ') }));
+                { title: 'Shipping Manifest', desc: 'Recipient addresses for current period', onDownload: handleDownloadShippingList },
+                { title: 'Pending Fulfilment Report', desc: 'Orders in PROCESSING state (Filtered)', onDownload: () => {
+                    const data = filteredOrders.filter(o => o.order_status === 'PROCESSING').map(o => ({ 'Order ID': o._id, 'Name': o.shipping_address?.name, 'City': o.shipping_address?.city, 'Items': o.items.map(it => `${it.qty}x ${it.name}`).join(' | ') }));
                     exportToCSV(data, 'Pending_Fulfillment_Report');
                 }},
-                { title: 'Shipped Logs', desc: 'Tracking history of dispatched orders', onDownload: () => {
-                    const data = orders.filter(o => o.order_status === 'SHIPPED').map(o => ({ 'Order ID': o._id, 'Customer': o.shipping_address?.name, 'Date': new Date(o.createdAt).toLocaleDateString() }));
+                { title: 'Dispatch History', desc: 'Tracking history of orders in this timeframe', onDownload: () => {
+                    const data = filteredOrders.filter(o => o.order_status === 'SHIPPED').map(o => ({ 'Order ID': o._id, 'Customer': o.shipping_address?.name, 'Date': new Date(o.createdAt).toLocaleDateString() }));
                     exportToCSV(data, 'Shipped_Orders_Report');
                 }}
               ]}
@@ -268,11 +339,24 @@ function MainTab({ active, icon: Icon, label, onClick }) {
   return (
     <button 
       onClick={onClick}
-      className={`flex items-center gap-2 px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-        active ? 'bg-brand-green text-white shadow-lg' : 'text-brand-dark/40 hover:text-brand-green bg-transparent'
+      className={`flex items-center gap-3 px-8 py-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${
+        active ? 'bg-brand-green text-white shadow-xl' : 'text-brand-dark/40 hover:text-brand-green bg-transparent hover:bg-brand-light/50'
       }`}
     >
-      <Icon size={16} />
+      <Icon size={18} />
+      {label}
+    </button>
+  );
+}
+
+function FilterBtn({ active, label, onClick }) {
+  return (
+    <button 
+      onClick={onClick}
+      className={`px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+        active ? 'bg-white text-brand-green shadow-sm' : 'text-brand-dark/30 hover:text-brand-dark bg-transparent'
+      }`}
+    >
       {label}
     </button>
   );
