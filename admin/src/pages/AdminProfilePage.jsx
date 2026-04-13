@@ -78,17 +78,18 @@ export default function AdminProfilePage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-brand-dark/40 uppercase tracking-widest px-1">Website Contact Email</label>
+                <label className="text-[10px] font-black text-brand-dark/40 uppercase tracking-widest px-1">OTP Recovery Email</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-dark/20" size={18} />
                   <input 
                     type="email" 
-                    value={profile.email} 
+                    value={profile.email || ''} 
                     onChange={e => setProfile({...profile, email: e.target.value})}
+                    placeholder="your@gmail.com"
                     className="w-full bg-brand-green/5 border-none rounded-2xl py-4 pl-12 pr-4 text-sm font-bold focus:ring-2 focus:ring-brand-warm transition-all outline-none"
                   />
                 </div>
-                <p className="text-[9px] text-brand-sale font-black uppercase tracking-tighter ml-1 italic opacity-70">Updating this will change the contact email shown on the website footer</p>
+                <p className="text-[9px] text-brand-green font-black uppercase tracking-tighter ml-1 italic opacity-80">⚡ OTP for password change will be sent to this email. Use a Gmail for best delivery.</p>
               </div>
 
               <div className="space-y-2">
