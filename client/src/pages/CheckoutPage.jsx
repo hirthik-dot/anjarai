@@ -67,6 +67,17 @@ const CheckoutPage = () => {
         setLoading(true);
 
         try {
+            // Dynamically load Razorpay only when needed (not in <head>)
+            if (!window.Razorpay) {
+                await new Promise((resolve, reject) => {
+                    const s = document.createElement('script');
+                    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+                    s.onload = resolve;
+                    s.onerror = () => reject(new Error('Failed to load payment system'));
+                    document.head.appendChild(s);
+                });
+            }
+
             // 1. Create Order in Backend
             const res = await fetch(`${API}/orders/create`, {
                 method: 'POST',
@@ -131,12 +142,6 @@ const CheckoutPage = () => {
                 },
                 theme: { color: "#2d6a4f" }
             };
-
-            if (!window.Razorpay) {
-              setError('Payment system unavailable. Please contact support or refresh.');
-              setLoading(false);
-              return;
-            }
 
             const rzp = new window.Razorpay(options);
             rzp.on('payment.failed', function (response){

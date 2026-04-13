@@ -59,8 +59,13 @@ const HeroSlider = () => {
                     {/* Background Image with Ken Burns Effect */}
                     <img
                         src={slide.image_url}
-                        alt={slide.title}
+                        alt={slide.title || 'Anjaraipetti product'}
                         className={`w-full h-full object-cover transform transition-transform duration-[8000ms] ease-linear ${index === current ? 'scale-110' : 'scale-100'}`}
+                        loading={index === 0 ? 'eager' : 'lazy'}
+                        fetchpriority={index === 0 ? 'high' : 'low'}
+                        decoding={index === 0 ? 'sync' : 'async'}
+                        width="1400"
+                        height="500"
                     />
 
                     {/* Gradient Overlay */}

@@ -86,7 +86,7 @@ const WhatsAppButton = () => {
         /* Mobile Adjustments */
         @media (max-width: 640px) {
           .wa-wrapper {
-            bottom: 20px;
+            bottom: 84px;
             right: 16px;
           }
           .wa-circle {

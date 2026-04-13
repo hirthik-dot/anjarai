@@ -27,19 +27,42 @@ const Footer = () => {
                         "{footer.brand_description}"
                     </p>
 
-                    <div className="flex items-center gap-4 md:gap-6">
-                        <a href={footer.instagram_url || "https://www.instagram.com/"} target="_blank" rel="noopener noreferrer" className="w-10 md:w-12 h-10 md:h-12 border border-white/10 rounded-full flex items-center justify-center text-white/50 hover:bg-sale hover:text-white hover:border-sale hover:-translate-y-1 hover:shadow-2xl hover:shadow-sale/40 transition-all duration-300 backdrop-blur-sm group">
-                            <i className="fab fa-instagram text-lg md:text-xl transition-transform group-hover:scale-110" />
+                    <div className="flex items-center gap-4 md:gap-5">
+                        {/* Instagram — pink-orange gradient */}
+                        <a
+                          href={footer.instagram_url || "https://www.instagram.com/"}
+                          target="_blank" rel="noopener noreferrer"
+                          title="Instagram"
+                          className="w-11 md:w-13 h-11 md:h-13 rounded-2xl flex items-center justify-center text-white hover:-translate-y-1.5 hover:scale-110 hover:shadow-2xl transition-all duration-300 group"
+                          style={{ background: 'linear-gradient(135deg, #f58529 0%, #dd2a7b 40%, #8134af 70%, #515bd4 100%)' }}
+                        >
+                            <i className="fab fa-instagram text-lg md:text-xl drop-shadow-sm" />
                         </a>
+
+                        {/* Facebook — brand blue */}
                         {footer.facebook_url && (
-                             <a href={footer.facebook_url} target="_blank" rel="noopener noreferrer" className="w-10 md:w-12 h-10 md:h-12 border border-white/10 rounded-full flex items-center justify-center text-white/50 hover:bg-green hover:text-white hover:border-green hover:-translate-y-1 hover:shadow-2xl hover:shadow-green/40 transition-all duration-300 backdrop-blur-sm group">
-                                <i className="fab fa-facebook text-lg md:text-xl transition-transform group-hover:scale-110" />
-                             </a>
+                            <a
+                              href={footer.facebook_url}
+                              target="_blank" rel="noopener noreferrer"
+                              title="Facebook"
+                              className="w-11 md:w-13 h-11 md:h-13 rounded-2xl flex items-center justify-center text-white hover:-translate-y-1.5 hover:scale-110 hover:shadow-2xl hover:shadow-[#1877F2]/50 transition-all duration-300"
+                              style={{ background: '#1877F2' }}
+                            >
+                                <i className="fab fa-facebook text-lg md:text-xl drop-shadow-sm" />
+                            </a>
                         )}
+
+                        {/* YouTube — brand red */}
                         {footer.youtube_url && (
-                             <a href={footer.youtube_url} target="_blank" rel="noopener noreferrer" className="w-10 md:w-12 h-10 md:h-12 border border-white/10 rounded-full flex items-center justify-center text-white/50 hover:bg-green hover:text-white hover:border-green hover:-translate-y-1 hover:shadow-2xl hover:shadow-green/40 transition-all duration-300 backdrop-blur-sm group">
-                                <i className="fab fa-youtube text-lg md:text-xl transition-transform group-hover:scale-110" />
-                             </a>
+                            <a
+                              href={footer.youtube_url}
+                              target="_blank" rel="noopener noreferrer"
+                              title="YouTube"
+                              className="w-11 md:w-13 h-11 md:h-13 rounded-2xl flex items-center justify-center text-white hover:-translate-y-1.5 hover:scale-110 hover:shadow-2xl hover:shadow-[#FF0000]/50 transition-all duration-300"
+                              style={{ background: '#FF0000' }}
+                            >
+                                <i className="fab fa-youtube text-lg md:text-xl drop-shadow-sm" />
+                            </a>
                         )}
                     </div>
 

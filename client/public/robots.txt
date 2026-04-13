@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+
+# Allow all major search engine bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Disallow private/utility routes
+Disallow: /api/
+Disallow: /checkout
+Disallow: /order-success
+Disallow: /orders/
+Disallow: /account
+
+# Sitemap location
+Sitemap: https://anjaraipettifoods.com/sitemap.xml

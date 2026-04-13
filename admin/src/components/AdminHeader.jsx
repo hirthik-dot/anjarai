@@ -53,7 +53,7 @@ export default function AdminHeader({ setSidebarOpen }) {
 
         {/* View Store Pill (Hidden on mobile) */}
         <a 
-          href="/" target="_blank"
+          href="https://anjaraipettifoods.com" target="_blank" rel="noopener noreferrer"
           className="hidden md:flex bg-brand-green hover:bg-brand-green-light text-white rounded-full px-6 py-2.5 text-xs font-black tracking-widest uppercase transition-all items-center gap-2 shadow-lg shadow-brand-green/20"
         >
           <Eye size={16} />

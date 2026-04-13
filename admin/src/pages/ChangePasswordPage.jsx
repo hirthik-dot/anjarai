@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
-import { Lock, Mail, Key, ShieldAlert, Send, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Lock, Mail, Key, ShieldAlert, Send, ArrowRight, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
 export default function ChangePasswordPage() {
@@ -8,7 +8,15 @@ export default function ChangePasswordPage() {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ otp: '', newPassword: '', confirmPassword: '' });
   const [message, setMessage] = useState('');
+  const [profileEmail, setProfileEmail] = useState('');
   const toast = useToast();
+
+  // Fetch the admin's registered email on mount
+  useEffect(() => {
+    api.get('/admin-profile').then(res => {
+      setProfileEmail(res.data?.email || '');
+    }).catch(() => {});
+  }, []);
 
   const handleRequestOtp = async () => {
     setLoading(true);
@@ -63,16 +71,40 @@ export default function ChangePasswordPage() {
               </div>
               <h2 className="text-2xl font-head font-black text-brand-dark">Two-Step Verification</h2>
               <p className="text-brand-dark/50 font-bold text-sm leading-relaxed">
-                To protect your account, we will send a one-time password (OTP) to your <span className="text-brand-green font-black underline underline-offset-4">verified email address</span>. You'll need this to confirm your password change.
+                An OTP will be sent to your registered email to confirm your password change.
               </p>
             </div>
 
+            {profileEmail ? (
+              <div className="bg-brand-green/5 border border-brand-green/15 rounded-3xl p-5 flex items-center gap-4">
+                <div className="w-10 h-10 bg-brand-green/10 text-brand-green rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <Mail size={20} />
+                </div>
+                <div>
+                  <p className="text-[9px] font-black text-brand-dark/40 uppercase tracking-widest">OTP will be sent to</p>
+                  <p className="text-sm font-black text-brand-green">
+                    {profileEmail.replace(/(.{2})(.*)(@.*)/, (_, a, b, c) => a + '*'.repeat(Math.max(b.length, 3)) + c)}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-brand-sale/5 border border-brand-sale/20 rounded-3xl p-5 flex items-start gap-4">
+                <AlertTriangle className="text-brand-sale flex-shrink-0 mt-0.5" size={20} />
+                <div>
+                  <p className="text-sm font-black text-brand-sale">No email configured</p>
+                  <p className="text-xs font-bold text-brand-dark/50 mt-1">
+                    Please go to <a href="/admin/profile" className="text-brand-green underline underline-offset-2">Admin Profile</a> and set your OTP Recovery Email first.
+                  </p>
+                </div>
+              </div>
+            )}
+
             <button 
               onClick={handleRequestOtp}
-              disabled={loading}
-              className="w-full bg-brand-green text-white py-5 rounded-2xl font-black uppercase tracking-[2px] shadow-lg shadow-brand-green/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+              disabled={loading || !profileEmail}
+              className="w-full bg-brand-green text-white py-5 rounded-2xl font-black uppercase tracking-[2px] shadow-lg shadow-brand-green/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Sending OTP...' : <><Send size={20} /> Request OTP via Email</>}
+              {loading ? 'Sending OTP...' : <><Send size={20} /> Send OTP to my Email</>}
             </button>
           </div>
         )}

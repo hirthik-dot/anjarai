@@ -109,7 +109,7 @@ export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
         {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-2">
           <a 
-            href="/" target="_blank"
+            href="https://anjaraipettifoods.com" target="_blank" rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 p-2.5 rounded-xl text-white/80 transition-all group"
             title="View Live Store"
           >

@@ -85,8 +85,8 @@ router.post('/request-password-otp', protect, async (req, res) => {
       expires_at: expires
     });
 
-    // Send OTP in background - don't block the response
-    sendOtpEmail(profile.email, profile.full_name || 'Admin', code).catch(e => console.error('Silent Admin OTP Fail:', e));
+    // Send OTP email (await so failures are reported properly)
+    await sendOtpEmail(profile.email, profile.full_name || 'Admin', code);
     
     // Mask email for response
     const masked = profile.email.replace(/(.{1,2})(.*)(@.*)/, (_, a, b, c) => a + '*'.repeat(b.length) + c);

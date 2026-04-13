@@ -33,48 +33,51 @@ router.put('/', protect, async (req, res) => {
 
   // Optional WhatsApp: validate if provided
   if (whatsapp_number && !/^\+?\d{10,15}$/.test(whatsapp_number.replace(/\s/g, ''))) {
-      return res.status(400).json({ error: 'Valid WhatsApp number is required (with country code, e.g. 919994617120)' });
+    return res.status(400).json({ error: 'Valid WhatsApp number is required (with country code, e.g. 919994617120)' });
   }
 
   const cleanWa = whatsapp_number ? whatsapp_number.replace(/\D/g, '') : '';
   const fullWa = cleanWa ? (cleanWa.startsWith('91') ? cleanWa : '91' + cleanWa) : '';
   const waLink = fullWa ? `https://wa.me/${fullWa}` : '';
+  const cleanEmail = email ? email.trim().toLowerCase() : null;
 
   try {
+    const updateFields = {
+      full_name: full_name.trim(),
+      phone: phone.trim(),
+      whatsapp_number: fullWa,
+      whatsapp_link: waLink,
+      updated_at: new Date()
+    };
+
+    // Only update email if provided — allows admin to set/change OTP email
+    if (cleanEmail) {
+      updateFields.email = cleanEmail;
+      updateFields.email_verified = true;  // Trusted since admin is already authenticated
+      updateFields.profile_complete = true;
+    }
+
     const profile = await AdminProfile.findOneAndUpdate(
       { admin_id: req.admin.id },
-      { 
-        full_name: full_name.trim(), 
-        email: email?.trim(),
-        phone: phone.trim(), 
-        whatsapp_number: fullWa, 
-        whatsapp_link: waLink, 
-        email_verified: true, // Auto-verify on update as requested to remove UI
-        updated_at: new Date() 
-      },
+      { $set: updateFields },
       { upsert: true, new: true }
     );
 
-    // Sync with Admin model (username)
-    if (email) {
-      await require('../models/Admin').findByIdAndUpdate(req.admin.id, { username: email.trim() });
-    }
-
-    // SYNC with FooterConfig
+    // SYNC contact email with FooterConfig (website display)
     let footer = await FooterConfig.findOne();
     if (footer) {
       if (fullWa) {
-        footer.whatsapp_number = `+${fullWa}`; 
+        footer.whatsapp_number = `+${fullWa}`;
         footer.whatsapp_link = waLink;
       }
-      if (email) {
-        footer.email = email.trim();
+      if (cleanEmail) {
+        footer.email = cleanEmail;
       }
       await footer.save();
       getIO().emit('footer:updated', footer);
     }
 
-    res.json({ message: 'Profile and website config updated', profile });
+    res.json({ message: 'Profile updated successfully', profile });
   } catch (err) {
     if (err.code === 11000) return res.status(400).json({ error: 'Email already in use by another account' });
     res.status(500).json({ error: err.message });
