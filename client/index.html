@@ -6,17 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Anjaraipetti - 100% Organic Homemade Masalas</title>
     <meta name="description" content="Pure, natural and organic masalas and food products crafted with love. FSSAI Certified and Lab Approved.">
-    
-    <!-- Google Fonts -->
+
+    <!-- Preconnect to speed up Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-    
-    <!-- Font Awesome (for social icons) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Razorpay Checkout Script -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <!-- Google Fonts — non-blocking via media trick -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    </noscript>
+
+    <!-- Font Awesome — deferred, non-blocking -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    </noscript>
+
+    <!-- Razorpay loaded ONLY when checkout is needed (see CheckoutPage.jsx) -->
   </head>
   <body>
     <div id="root"></div>

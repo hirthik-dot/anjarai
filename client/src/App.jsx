@@ -1,8 +1,12 @@
 // src/App.jsx
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
+import { DataProvider } from './context/DataContext'
+import { LanguageProvider } from './context/LanguageContext'
+
+// ── Always-present layout components (small, needed on every page) ──────────
 import AnnouncementBar from './components/AnnouncementBar'
 import TaglineBar from './components/TaglineBar'
 import Navbar from './components/Navbar'
@@ -12,30 +16,38 @@ import WhatsAppButton from './components/WhatsAppButton'
 import Newsletter from './components/Newsletter'
 import Footer from './components/Footer'
 import BottomNav from './components/BottomNav'
-import HomePage from './pages/HomePage'
-import CollectionsListPage from './pages/CollectionsListPage'
-import CollectionPage from './pages/CollectionPage'
-import ProductDetailPage from './pages/ProductDetailPage'
-import SearchPage from './pages/SearchPage'
-import ComingSoonPage from './pages/ComingSoonPage'
-import CheckoutPage from './pages/CheckoutPage'
-import OrderSuccessPage from './pages/OrderSuccessPage'
-import MyOrdersPage from './pages/MyOrdersPage'
-import OrderDetailPage from './pages/OrderDetailPage'
-import AboutPage from './pages/AboutPage'
-import PolicyPage from './pages/PolicyPage'
-import SpecialPromoOffersPage from './pages/SpecialPromoOffersPage'
 import WakeUpBanner from './components/WakeUpBanner'
-import AccountPage from './pages/AccountPage'
 
-import { DataProvider } from './context/DataContext'
-import { LanguageProvider } from './context/LanguageContext'
+// ── Pages: lazy-loaded (code-split per route) ───────────────────────────────
+// Each page is fetched ONLY when that route is first visited.
+// This eliminates 6+ MB of unused JS on the initial page load.
+const HomePage               = lazy(() => import('./pages/HomePage'))
+const CollectionsListPage    = lazy(() => import('./pages/CollectionsListPage'))
+const CollectionPage         = lazy(() => import('./pages/CollectionPage'))
+const ProductDetailPage      = lazy(() => import('./pages/ProductDetailPage'))
+const SearchPage             = lazy(() => import('./pages/SearchPage'))
+const ComingSoonPage         = lazy(() => import('./pages/ComingSoonPage'))
+const CheckoutPage           = lazy(() => import('./pages/CheckoutPage'))
+const OrderSuccessPage       = lazy(() => import('./pages/OrderSuccessPage'))
+const MyOrdersPage           = lazy(() => import('./pages/MyOrdersPage'))
+const OrderDetailPage        = lazy(() => import('./pages/OrderDetailPage'))
+const AboutPage              = lazy(() => import('./pages/AboutPage'))
+const PolicyPage             = lazy(() => import('./pages/PolicyPage'))
+const SpecialPromoOffersPage = lazy(() => import('./pages/SpecialPromoOffersPage'))
+const AccountPage            = lazy(() => import('./pages/AccountPage'))
+
+// ── Minimal spinner shown while a lazy chunk loads ──────────────────────────
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 rounded-full border-4 border-[#2E7D32]/20 border-t-[#2E7D32] animate-spin" />
+    </div>
+  )
+}
 
 function ScrollToTop() {
   const location = useLocation();
   useEffect(() => {
-    // Ensure we scroll after the route content mounts.
-    // This prevents "URL changed but I still see the footer area" behavior.
     const t = setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' }), 0);
     return () => clearTimeout(t);
   }, [location.pathname]);
@@ -69,27 +81,29 @@ export default function App() {
 
             <main className="flex-grow pb-20 md:pb-0">
               <ScrollToTop />
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/collections" element={<CollectionsListPage />} />
-                <Route path="/collections/special-promo-offers" element={<SpecialPromoOffersPage />} />
-                <Route path="/collections/:slug" element={<CollectionPage />} />
-                <Route path="/products/:slug" element={<ProductDetailPage />} />
-                <Route path="/terms" element={<PolicyPage policyKey="terms" />} />
-                <Route path="/privacy" element={<PolicyPage policyKey="privacy" />} />
-                <Route path="/shipping" element={<PolicyPage policyKey="shipping" />} />
-                <Route path="/refund" element={<PolicyPage policyKey="refund" />} />
-                <Route path="/cookie" element={<PolicyPage policyKey="cookie" />} />
-                <Route path="/cancellation" element={<PolicyPage policyKey="cancellation" />} />
-                <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/order-success" element={<OrderSuccessPage />} />
-                <Route path="/account" element={<AccountPage />} />
-                <Route path="/orders" element={<MyOrdersPage />} />
-                <Route path="/orders/:id" element={<OrderDetailPage />} />
-                <Route path="/search" element={<SearchPage />} />
-                <Route path="*" element={<ComingSoonPage />} />
-              </Routes>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/"                                  element={<HomePage />} />
+                  <Route path="/about"                             element={<AboutPage />} />
+                  <Route path="/collections"                       element={<CollectionsListPage />} />
+                  <Route path="/collections/special-promo-offers"  element={<SpecialPromoOffersPage />} />
+                  <Route path="/collections/:slug"                 element={<CollectionPage />} />
+                  <Route path="/products/:slug"                    element={<ProductDetailPage />} />
+                  <Route path="/terms"       element={<PolicyPage policyKey="terms" />} />
+                  <Route path="/privacy"     element={<PolicyPage policyKey="privacy" />} />
+                  <Route path="/shipping"    element={<PolicyPage policyKey="shipping" />} />
+                  <Route path="/refund"      element={<PolicyPage policyKey="refund" />} />
+                  <Route path="/cookie"      element={<PolicyPage policyKey="cookie" />} />
+                  <Route path="/cancellation" element={<PolicyPage policyKey="cancellation" />} />
+                  <Route path="/checkout"    element={<CheckoutPage />} />
+                  <Route path="/order-success" element={<OrderSuccessPage />} />
+                  <Route path="/account"     element={<AccountPage />} />
+                  <Route path="/orders"      element={<MyOrdersPage />} />
+                  <Route path="/orders/:id"  element={<OrderDetailPage />} />
+                  <Route path="/search"      element={<SearchPage />} />
+                  <Route path="*"            element={<ComingSoonPage />} />
+                </Routes>
+              </Suspense>
             </main>
 
             <Newsletter />
